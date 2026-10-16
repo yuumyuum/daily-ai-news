@@ -68,6 +68,9 @@ LIMITS = {
     "quiz.question": 100,
     "quiz.option": 30,
     "quiz.explanation": 150,
+    "debate.question": 60,
+    "debate.label": 12,
+    "debate.reason": 80,
 }
 
 BROWSER_UA = (
@@ -105,11 +108,13 @@ NEWS_BASE = {
 
 BIGTECH_ITEM = obj({**NEWS_BASE, "tag": STR, "summary": STR_LIST})
 TECH_ITEM = obj({**NEWS_BASE, "category": STR, "embedYoutubeId": NULLABLE_STR, "summary": STR_LIST})
+DEBATE_SIDE = obj({"label": STR, "reasons": STR_LIST})
 SOCIAL_ITEM = obj({
     **NEWS_BASE,
     "cardBadge": STR,
     "question": STR,
     "sections": {"type": "array", "items": obj({"title": STR, "items": STR_LIST})},
+    "debate": obj({"question": STR, "pro": DEBATE_SIDE, "con": DEBATE_SIDE}),
 })
 
 ISSUE_SCHEMA = obj({
@@ -260,6 +265,11 @@ def build_user_prompt(date_key, weekday, ctx, quiz_answer):
    - sections는 최소 3개: '1. 이용 현황(또는 연구 방법)', '2. 주요 장점', '3. 위험성', 필요하면 '4. 연구의 한계'.
    - question: 학생들이 토론할 수 있는 핵심 탐구 질문 1개 (따옴표 없이).
    - cardBadge 예: '📊 학술 연구 (UC Berkeley · COLM 2026)'.
+   - debate: 학생 찬반 투표용 질문 1개 (탐구 질문과 별개).
+     · question: '예/아니오'로 답할 수 있는 한 문장. 예: '숙제할 때 AI에게 정답을 물어봐도 될까?'
+     · pro.label / con.label: 버튼에 들어갈 짧은 입장. 예: '괜찮아', '안 돼'
+     · pro.reasons / con.reasons: 각 2~3개. 오늘 기사 내용에 근거하고, 양쪽 무게가 비슷하게.
+     · 정답이 뻔한 질문(예: 괴롭힘을 해도 될까?), 특정 정당·정치인·종교에 관한 질문, 학생 개인 경험을 털어놓게 하는 질문은 금지.
 4. dictionary: 오늘 기사에 나온 AI 용어 1개를 학생 눈높이로 설명.
 5. tip: 오늘 기사와 연결된 프롬프트 팁. body에는 '{{prompt}}' 자리표시자를 정확히 한 번 넣을 것.
 6. quiz: 오늘 뉴스 기반 3지선다.
@@ -448,6 +458,13 @@ def check_lengths(content):
                 over(f"news.{key}.{field}", item[field], LIMITS[field])
         if key == "social":
             over("news.social.question", item.get("question"), LIMITS["question"])
+            debate = item.get("debate") or {}
+            over("news.social.debate.question", debate.get("question"), LIMITS["debate.question"])
+            for side in ("pro", "con"):
+                s = debate.get(side) or {}
+                over(f"news.social.debate.{side}.label", s.get("label"), LIMITS["debate.label"])
+                for r in s.get("reasons", []):
+                    over(f"news.social.debate.{side} 근거", r, LIMITS["debate.reason"])
             for s in item.get("sections", []):
                 for it in s.get("items", []):
                     over("news.social.sections 항목", it, LIMITS["section_item"])
@@ -525,6 +542,17 @@ def validate(content, ctx, meta=None, check_links=True):
                 errors.append(f"news.{key}.sourceUrl 이 열리지 않음({info}): {url}")
             elif status == "unknown":
                 warnings.append(f"news.{key}.sourceUrl 접속 확인 불가({info}, 봇 차단일 수 있음): {url}")
+
+    debate = (news.get("social") or {}).get("debate")
+    if not debate or not (debate.get("question") or "").strip():
+        errors.append("news.social.debate (찬반 투표 질문) 없음")
+    else:
+        for side in ("pro", "con"):
+            s = debate.get(side) or {}
+            if not (s.get("label") or "").strip():
+                errors.append(f"news.social.debate.{side}.label 없음")
+            if not 2 <= len(s.get("reasons") or []) <= 3:
+                errors.append(f"news.social.debate.{side}.reasons 는 2~3개여야 함")
 
     quiz = content.get("quiz", {})
     if len(quiz.get("options", [])) != 3:

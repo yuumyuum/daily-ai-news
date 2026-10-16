@@ -19,6 +19,10 @@ generate_news.py      오늘 호 JSON을 만들어 data/ 에 "추가"
 - 지난 호 바로가기: `https://yuumyuum.github.io/daily-ai-news/?date=2026-10-15`
 - 디자인을 고치면 지난 호 전체에 한꺼번에 반영됩니다.
 
+## 찬반 투표
+
+시사 기사마다 찬반 질문(`news.social.debate`)이 있고, 학생이 학번·이름과 함께 투표하면 결과가 바로 보입니다. 저장은 Supabase를 씁니다. 설정 방법은 [SUPABASE_SETUP.md](SUPABASE_SETUP.md)를 보세요.
+
 ## 손으로 고치거나 추가하기
 
 - 기사 내용 수정: `data/해당날짜.json`만 고치면 됩니다.

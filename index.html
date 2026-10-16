@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>☀️ 1분 AI 모닝 리포트 - 학생을 위한 아침 AI 신문</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="supabase-config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -186,6 +187,79 @@
                     <div>
                         <div class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-0.5">오늘의 핵심 탐구 질문</div>
                         <p id="social-question" class="text-xs text-slate-700 font-medium"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 찬반 투표 (data 의 news.social.debate 가 있을 때만 표시) -->
+            <div id="debate-box" class="hidden mt-4 p-5 rounded-xl bg-indigo-50/60 border border-indigo-200">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xl">🗳️</span>
+                    <h3 class="font-bold text-slate-900 text-base">오늘의 찬반 토론</h3>
+                    <span class="text-[11px] text-indigo-700 bg-white border border-indigo-200 px-2 py-0.5 rounded-full ml-auto">투표하면 바로 결과가 보여요</span>
+                </div>
+                <p id="debate-question" class="font-bold text-indigo-950 text-base md:text-lg mb-4"></p>
+
+                <!-- 1단계: 양쪽 근거 읽고 입장 고르기 -->
+                <div id="debate-choose">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <div class="bg-white rounded-lg border border-sky-200 p-3">
+                            <div class="text-xs font-bold text-sky-700 mb-1.5">👍 <span id="debate-pro-title"></span> 쪽 생각</div>
+                            <ul id="debate-pro-reasons" class="space-y-1 text-xs text-slate-700"></ul>
+                        </div>
+                        <div class="bg-white rounded-lg border border-rose-200 p-3">
+                            <div class="text-xs font-bold text-rose-700 mb-1.5">👎 <span id="debate-con-title"></span> 쪽 생각</div>
+                            <ul id="debate-con-reasons" class="space-y-1 text-xs text-slate-700"></ul>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="debate-btn-pro" onclick="chooseSide('pro')" class="py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm transition-colors shadow-sm active:scale-[0.98]">👍 <span id="debate-pro-label"></span></button>
+                        <button id="debate-btn-con" onclick="chooseSide('con')" class="py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-colors shadow-sm active:scale-[0.98]">👎 <span id="debate-con-label"></span></button>
+                    </div>
+                    <p id="debate-disabled" class="hidden text-xs text-slate-500 mt-3 text-center">🛠️ 투표 기능을 준비하고 있어요. (선생님 설정이 필요해요)</p>
+                </div>
+
+                <!-- 2단계: 학번·이름·이유 -->
+                <form id="debate-form" class="hidden bg-white rounded-xl border border-indigo-200 p-4" onsubmit="submitVote(event)">
+                    <p class="text-sm font-bold text-slate-900 mb-3">
+                        내 선택: <span id="debate-my-choice" class="px-2 py-0.5 rounded-md"></span>
+                        <button type="button" onclick="resetDebateView()" class="text-xs text-slate-500 underline ml-2">다시 고르기</button>
+                    </p>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <label class="text-xs font-semibold text-slate-700">학번
+                            <input id="debate-student-id" required maxlength="15" pattern="[0-9A-Za-z\-]{1,15}" inputmode="numeric" autocomplete="off" placeholder="예: 10101" class="mt-1 w-full border border-slate-300 rounded-lg px-2.5 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300">
+                        </label>
+                        <label class="text-xs font-semibold text-slate-700">이름
+                            <input id="debate-student-name" required maxlength="20" autocomplete="off" placeholder="예: 홍길동" class="mt-1 w-full border border-slate-300 rounded-lg px-2.5 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300">
+                        </label>
+                    </div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">이유 <span class="font-normal text-slate-400">(선택, 200자 이내)</span>
+                        <textarea id="debate-reason" maxlength="200" rows="2" oninput="updateReasonCount()" placeholder="왜 그렇게 생각했는지 짧게 써 보세요." class="mt-1 w-full border border-slate-300 rounded-lg px-2.5 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300 resize-none"></textarea>
+                    </label>
+                    <div class="flex justify-between items-start gap-3 mb-3">
+                        <p class="text-[11px] text-slate-500 leading-relaxed">🔒 학번·이름·이유는 선생님만 볼 수 있고, 화면에는 찬반 숫자만 공개돼요. 같은 학번으로 다시 투표하면 마지막 선택으로 바뀌어요.</p>
+                        <span id="debate-reason-count" class="text-[11px] text-slate-400 shrink-0">0/200</span>
+                    </div>
+                    <p id="debate-error" class="hidden text-xs text-red-600 font-semibold mb-2"></p>
+                    <button id="debate-submit" type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg transition-colors disabled:opacity-60">투표하고 결과 보기</button>
+                </form>
+
+                <!-- 3단계: 결과 -->
+                <div id="debate-result" class="hidden bg-white rounded-xl border border-indigo-200 p-4">
+                    <p class="text-sm font-bold text-slate-900 mb-3">🎉 투표 완료! <span class="font-normal text-slate-600">내 선택: <span id="debate-result-choice" class="font-bold"></span></span></p>
+                    <div class="space-y-2 mb-2">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-sky-700 mb-1"><span>👍 <span id="debate-result-pro-label"></span></span><span id="debate-result-pro-text"></span></div>
+                            <div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div id="debate-bar-pro" class="h-full bg-sky-500 rounded-full transition-all duration-700" style="width:0%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-rose-700 mb-1"><span>👎 <span id="debate-result-con-label"></span></span><span id="debate-result-con-text"></span></div>
+                            <div class="h-4 bg-slate-100 rounded-full overflow-hidden"><div id="debate-bar-con" class="h-full bg-rose-500 rounded-full transition-all duration-700" style="width:0%"></div></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span id="debate-total" class="text-[11px] text-slate-500"></span>
+                        <button type="button" onclick="resetDebateView()" class="text-xs text-indigo-600 underline">생각이 바뀌었나요? 다시 투표하기</button>
                     </div>
                 </div>
             </div>
@@ -449,6 +523,179 @@
 
             // 6. 푸터 출처
             setText('footer-sources', issue.sources);
+
+            // 7. 찬반 투표
+            renderDebate();
+        }
+
+        // ─────────────────────────────────────────────
+        // 찬반 투표 (Supabase 함수 cast_debate_vote / debate_counts 호출)
+        //   학번·이름·이유는 서버로만 보내고 이 기기에는 저장하지 않음.
+        //   이 기기에는 "이 날짜에 투표했는지 + 선택"만 기억 (다시 열면 결과 바로 표시).
+        // ─────────────────────────────────────────────
+        let debateChoice = null;
+
+        function supabaseReady() {
+            const cfg = window.SUPABASE_CONFIG || {};
+            return /^https:\/\/.+/.test(cfg.url || '') && !!cfg.anonKey;
+        }
+
+        async function callSupabase(fn, body) {
+            const cfg = window.SUPABASE_CONFIG;
+            const res = await fetch(`${cfg.url.replace(/\/$/, '')}/rest/v1/rpc/${fn}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    apikey: cfg.anonKey,
+                    Authorization: `Bearer ${cfg.anonKey}`
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json().catch(() => null);
+            if (!res.ok) {
+                const msg = (data && (data.message || data.hint)) || `서버 오류 (${res.status})`;
+                throw new Error(msg);
+            }
+            const row = Array.isArray(data) ? data[0] : data;
+            return { pro: Number(row?.pro || 0), con: Number(row?.con || 0) };
+        }
+
+        function voteStorageKey() { return `debate-vote:${currentDateKey}`; }
+        function loadMyVote() {
+            try { return JSON.parse(localStorage.getItem(voteStorageKey()) || 'null'); } catch (e) { return null; }
+        }
+        function saveMyVote(choice) {
+            try { localStorage.setItem(voteStorageKey(), JSON.stringify({ choice })); } catch (e) { /* 저장 불가 환경 */ }
+        }
+
+        function showDebateStep(step) {
+            toggle('debate-choose', step === 'choose');
+            toggle('debate-form', step === 'form');
+            toggle('debate-result', step === 'result');
+        }
+
+        function renderDebate() {
+            const debate = (newsData.social || {}).debate;
+            toggle('debate-box', !!debate);
+            if (!debate) return;
+
+            setText('debate-question', debate.question);
+            ['pro', 'con'].forEach(side => {
+                const s = debate[side] || {};
+                setText(`debate-${side}-title`, s.label);
+                setText(`debate-${side}-label`, s.label);
+                setText(`debate-result-${side}-label`, s.label);
+                document.getElementById(`debate-${side}-reasons`).innerHTML = (s.reasons || [])
+                    .map(r => `<li class="flex items-start gap-1.5"><span class="font-bold ${side === 'pro' ? 'text-sky-500' : 'text-rose-500'}">•</span><span>${esc(r)}</span></li>`)
+                    .join('');
+            });
+
+            const ready = supabaseReady();
+            toggle('debate-disabled', !ready);
+            ['debate-btn-pro', 'debate-btn-con'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.disabled = !ready;
+                btn.classList.toggle('opacity-50', !ready);
+                btn.classList.toggle('cursor-not-allowed', !ready);
+            });
+
+            const mine = loadMyVote();
+            if (ready && mine && mine.choice) {
+                debateChoice = mine.choice;
+                showDebateStep('result');
+                showResult({ pro: 0, con: 0 }, mine.choice, true);
+                callSupabase('debate_counts', { p_issue_date: currentDateKey })
+                    .then(counts => showResult(counts, mine.choice))
+                    .catch(() => setText('debate-total', '결과를 불러오지 못했어요.'));
+            } else {
+                resetDebateView();
+            }
+        }
+
+        function sideLabel(side) {
+            const debate = (newsData.social || {}).debate || {};
+            return (debate[side] || {}).label || (side === 'pro' ? '찬성' : '반대');
+        }
+
+        function chooseSide(side) {
+            if (!supabaseReady()) return;
+            debateChoice = side;
+            const chip = document.getElementById('debate-my-choice');
+            chip.textContent = (side === 'pro' ? '👍 ' : '👎 ') + sideLabel(side);
+            chip.className = `px-2 py-0.5 rounded-md ${side === 'pro' ? 'bg-sky-100 text-sky-800' : 'bg-rose-100 text-rose-800'}`;
+            toggle('debate-error', false);
+            showDebateStep('form');
+            document.getElementById('debate-student-id').focus();
+        }
+
+        function resetDebateView() {
+            debateChoice = null;
+            ['debate-student-id', 'debate-student-name', 'debate-reason'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            updateReasonCount();
+            toggle('debate-error', false);
+            showDebateStep('choose');
+        }
+
+        function updateReasonCount() {
+            setText('debate-reason-count', `${document.getElementById('debate-reason').value.length}/200`);
+        }
+
+        async function submitVote(event) {
+            event.preventDefault();
+            if (!debateChoice || !supabaseReady()) return;
+            const studentId = document.getElementById('debate-student-id').value.trim();
+            const studentName = document.getElementById('debate-student-name').value.trim();
+            const reason = document.getElementById('debate-reason').value.trim();
+            const errorEl = document.getElementById('debate-error');
+            const submitBtn = document.getElementById('debate-submit');
+
+            if (!/^[0-9A-Za-z-]{1,15}$/.test(studentId)) {
+                errorEl.textContent = '학번을 확인해 주세요. (숫자·영문, 15자 이내)';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (!studentName) {
+                errorEl.textContent = '이름을 입력해 주세요.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '보내는 중...';
+            try {
+                const counts = await callSupabase('cast_debate_vote', {
+                    p_issue_date: currentDateKey,
+                    p_student_id: studentId,
+                    p_student_name: studentName,
+                    p_choice: debateChoice,
+                    p_reason: reason || null
+                });
+                saveMyVote(debateChoice);
+                ['debate-student-id', 'debate-student-name', 'debate-reason'].forEach(id => {
+                    document.getElementById(id).value = '';  // 공용 컴퓨터를 위해 바로 지움
+                });
+                showDebateStep('result');
+                showResult(counts, debateChoice);
+            } catch (e) {
+                errorEl.textContent = '투표하지 못했어요: ' + e.message;
+                errorEl.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '투표하고 결과 보기';
+            }
+        }
+
+        function showResult(counts, myChoice, loading = false) {
+            const total = counts.pro + counts.con;
+            const pct = side => (total ? Math.round((counts[side] / total) * 100) : 0);
+            setText('debate-result-choice', (myChoice === 'pro' ? '👍 ' : '👎 ') + sideLabel(myChoice));
+            ['pro', 'con'].forEach(side => {
+                document.getElementById(`debate-bar-${side}`).style.width = `${pct(side)}%`;
+                setText(`debate-result-${side}-text`, loading ? '…' : `${pct(side)}% (${counts[side]}명)`);
+            });
+            setText('debate-total', loading ? '결과를 불러오는 중...' : `지금까지 ${total}명 참여`);
         }
 
         function openModal(key) {
