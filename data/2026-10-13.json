@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-13",
+  "issueNo": 140,
+  "weekday": "화",
+  "news": {
+    "openai": {
+      "badge": "OpenAI (오픈AI)",
+      "tag": null,
+      "cardTitle": "ChatGPT 대화 기반 맞춤형 오디오 일기 도구 테스트",
+      "cardSummary": "하루 동안의 학습과 감정을 대화로 주고받으면 자동으로 예쁜 일기 형식으로 작성해주는 오디오 기능이 등장했어.",
+      "title": "ChatGPT 대화 기반 맞춤형 오디오 일기 도구 테스트",
+      "date": "2026년 10월 13일",
+      "sourceName": "OpenAI Blog",
+      "sourceUrl": "https://openai.com",
+      "summary": [
+        "음성 대화만으로 하루 일과와 감정을 스스로 정리하고 기록해주는 감성 AI 라이팅 툴"
+      ],
+      "deepDive": "글쓰기가 서툰 어린 학생들도 말하기를 통해 생각을 정돈하고 일기를 완성하는 경험을 선사합니다."
+    },
+    "gemini": {
+      "badge": "Google Gemini (제미나이)",
+      "tag": null,
+      "cardTitle": "유튜브 스튜디오 연동 학습용 요약 챕터 자동 생성 기능",
+      "cardSummary": "긴 교육용 동영상도 AI가 자동으로 핵심 주제별로 단락을 나누고 한 줄 요약을 달아주는 기능이 추가되었어!",
+      "title": "유튜브 스튜디오 연동 학습용 요약 챕터 자동 생성 기능",
+      "date": "2026년 10월 13일",
+      "sourceName": "Google YouTube Blog",
+      "sourceUrl": "https://youtube.com",
+      "summary": [
+        "영상 콘텐츠의 핵심 구간 분석 및 타임라인 자동 정리 기능 제공"
+      ],
+      "deepDive": "긴 강의 영상도 필요한 부분만 빠르게 골라 공부할 수 있어 학습 효율이 극대화됩니다."
+    },
+    "claude": {
+      "badge": "Anthropic Claude (클로드)",
+      "tag": null,
+      "cardTitle": "데이터 보안 강화를 위한 프라이버시 보호 보고서 공개",
+      "cardSummary": "사용자가 입력한 학습 데이터나 대화 내용이 모델 학습에 절대 무단 사용되지 않는 완전 비공개 모드를 강화했어.",
+      "title": "데이터 보안 강화를 위한 프라이버시 보호 보고서 공개",
+      "date": "2026년 10월 13일",
+      "sourceName": "Anthropic Trust",
+      "sourceUrl": "https://www.anthropic.com",
+      "summary": [
+        "개인정보 및 학교 관련 데이터 보호를 위한 철저한 암호화 정책 발표"
+      ],
+      "deepDive": "학교와 기업에서 안심하고 AI 시스템을 도입할 수 있도록 개인정보 보안 기준을 극대화했습니다."
+    },
+    "tech": {
+      "badge": "신기술 탐구",
+      "category": "🚀 신기술 탐구",
+      "cardTitle": "실시간 통번역 Earbuds AI 이어폰 보급 확대",
+      "cardSummary": "귀에 꽂기만 하면 외국어 수업이나 대화를 지연 없이 바로 내 귀에 한국어로 들려주는 AI 이어폰 소식이야.",
+      "title": "실시간 통번역 Earbuds AI 이어폰 보급 확대",
+      "date": "2026년 10월 13일",
+      "sourceName": "Gizmodo",
+      "sourceUrl": "https://gizmodo.com",
+      "summary": [
+        "외국어 음성을 실시간 음성으로 동시 통역하여 전달하는 오디오 칩 기술"
+      ],
+      "deepDive": "글로벌 교류와 외국어 학습의 패러다임을 바꿀 인공지능 오디오 기술입니다."
+    },
+    "social": {
+      "badge": "AI 사회 동향",
+      "cardTitle": "전국 초·중·고 AI 디지털 교과서 시범 수업 성과 발표",
+      "cardSummary": "AI 교과서를 시범 사용한 학급에서 학생들의 자기주도 학습 시간이 크게 늘어났다는 결과가 나왔어.",
+      "title": "전국 초·중·고 AI 디지털 교과서 시범 수업 성과 발표",
+      "cardBadge": "📊 AI 사회 동향",
+      "question": null,
+      "date": "2026년 10월 13일",
+      "sourceName": "EduNews",
+      "sourceUrl": "https://moe.go.kr",
+      "sections": [
+        {
+          "title": "1. 맞춤형 진단",
+          "items": [
+            "학생별로 틀린 문제를 진단해 개인별 보충 문제를 자동 제공함."
+          ]
+        }
+      ],
+      "deepDive": "모든 학생이 자신의 속도에 맞춰 공부할 수 있는 미래형 맞춤 교실의 가능성을 보여줍니다."
+    }
+  },
+  "dictionary": null,
+  "tip": null,
+  "quiz": {
+    "question": "Q. AI가 영상이나 문서를 읽고 핵심 내용만 짧게 줄여서 보여주는 기능을 무엇이라고 할까요?",
+    "options": [
+      "1) 텍스트 확장",
+      "2) 자동 요약",
+      "3) 자동 번역"
+    ],
+    "correct": 2,
+    "explanation": "🎉 정답: 2번 (자동 요약)\n복잡하고 긴 글이나 영상의 핵심을 알아서 뽑아내는 AI의 대표 기능입니다!"
+  },
+  "sources": "OpenAI, Google, Anthropic 공식 발표"
+}

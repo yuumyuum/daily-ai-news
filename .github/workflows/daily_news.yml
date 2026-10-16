@@ -5,6 +5,18 @@ on:
     # 한국 시간 기준 매일 오전 07:00 (UTC 22:00)
     - cron: '0 22 * * *'
   workflow_dispatch: # 깃허브 웹에서 버튼으로 수동 실행 가능하게 설정
+    inputs:
+      force:
+        description: '오늘 호가 이미 있어도 다시 생성'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-news
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -17,22 +29,29 @@ jobs:
       - name: Python 환경 설정
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: 필요한 라이브러리 설치
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: GPT API로 뉴스 html 생성 스크립트 실행
+      - name: 오늘 호 JSON 생성 (data/ 에 추가만, index.html 은 그대로)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python generate_news.py
+          # 선택: 저장소 Settings > Variables 에서 모델을 바꿀 수 있음 (비워 두면 gpt-4o)
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            python generate_news.py --force
+          else
+            python generate_news.py
+          fi
 
-      - name: 업데이트된 index.html 자동 커밋 및 푸시
+      - name: 새 호 자동 커밋 및 푸시
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "GitHub Actions Bot"
-          git add index.html
-          git commit -m "Auto Update: Daily AI News ($(date +'%Y-%m-%d'))" || exit 0
+          git add data/
+          git commit -m "Auto Update: Daily AI News ($(TZ=Asia/Seoul date +'%Y-%m-%d'))" || exit 0
           git push

@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-15",
+  "issueNo": 142,
+  "weekday": "목",
+  "news": {
+    "openai": {
+      "badge": "OpenAI (오픈AI)",
+      "tag": "안전성 강화",
+      "cardTitle": "청소년 전용 안전 가이드라인 및 최신 보안 정책 발표!",
+      "cardSummary": "학생들이 AI를 해로운 용도 없이 안전하게 사용할 수 있도록 청소년 보호 가이드라인을 대폭 늘렸어! 최신 모델 보안 체계도 한층 더 탄탄해지고 있지.",
+      "title": "청소년 전용 ChatGPT 안전 가이드 및 최신 프레임워크 공개",
+      "date": "2026년 10월 15일",
+      "sourceName": "The Guardian / OpenAI Official Center",
+      "sourceUrl": "https://www.google.com/search?q=OpenAI+safety+guidelines+for+teenagers+2026",
+      "summary": [
+        "학생들이 안전하게 AI를 이용할 수 있도록 개인정보 보호 및 유해 콘텐츠 차단 가이드라인이 신설되었습니다.",
+        "학교 및 가정에서 안전하게 사용할 수 있는 청소년 계정 맞춤형 필터링 기술이 적용됩니다.",
+        "AI 모델이 부적절한 대답을 유도하는 질문에 대해 스스로 거절하는 성능이 향상되었습니다."
+      ],
+      "deepDive": "최근 AI 모델이 더욱 똑똑해짐에 따라 청소년의 학습을 돕는 유익함도 크지만, 잘못된 정보를 전달하거나 위험한 대화를 나누는 상황을 방지하기 위한 조치입니다."
+    },
+    "gemini": {
+      "badge": "Google Gemini (제미나이)",
+      "tag": "신규 모델",
+      "cardTitle": "스스로 장시간 코딩하고 심층 업무 돕는 'Gemini 4 Argon' 모델 출시!",
+      "cardSummary": "구글이 스스로 오류를 고치며 장시간 복잡한 코딩과 전문 업무를 해결해 내는 차세대 AI 모델 '제미나이 4 아르곤(Argon)'을 전격 공개했어!",
+      "title": "스스로 장시간 코딩하고 심층 업무 돕는 'Gemini 4 Argon' 모델 출시!",
+      "date": "2026년 10월 14일",
+      "sourceName": "Google DeepMind Official",
+      "sourceUrl": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/",
+      "summary": [
+        "구글이 복잡한 코딩과 금융, 법률 문제 해결에 특화된 차세대 AI 모델 'Gemini 4 Argon'을 공개했습니다.",
+        "수십만 줄의 코드를 스스로 분석하고, 테스트 후 오류까지 재수정하는 능력이 향상되었습니다."
+      ],
+      "deepDive": "사람이 목표만 주면 수 시간에 걸쳐 계획을 세우고, 코딩하고, 스스로 테스트까지 완료하는 자율형 심층 AI 모델입니다."
+    },
+    "claude": {
+      "badge": "Anthropic Claude (클로드)",
+      "tag": "오늘의 신규뉴스",
+      "cardTitle": "2026 미국 중간선거 대비 공식 투표 정보 제공 및 선거 안전장치 강화!",
+      "cardSummary": "Anthropic이 2026년 선거를 앞두고 챗봇 Claude에 직접 주별 유권자 등록 및 투표 정보를 정확히 안내하는 기능과 가짜 뉴스 생성 금지 정책을 적용했어!",
+      "title": "2026 미국 중간선거 대비 공식 투표 정보 제공 및 선거 안전장치 강화!",
+      "date": "2026년 10월 15일",
+      "sourceName": "Anthropic Newsroom",
+      "sourceUrl": "https://www.anthropic.com/news/2026-us-midterms",
+      "summary": [
+        "챗봇 Claude에 직접 주별 유권자 등록 및 투표소 안내 기능을 탑재했습니다.",
+        "가짜 뉴스 대량 생성을 예방하는 선거 안전 시스템을 적용했습니다."
+      ],
+      "deepDive": "AI가 유권자에게 왜곡된 정보를 전달하는 것을 막고 정확한 유권자 안내만을 다루도록 구성되었습니다."
+    },
+    "tech": {
+      "badge": "신기술 탐구 (최신 영상)",
+      "category": "🤖 피지컬 AI & 로보틱스 (최신 영상)",
+      "cardTitle": "화면을 벗어나 실생활로 온 '피지컬 AI' 로봇 시대!",
+      "cardSummary": "AI가 화면 속 대화를 넘어 직접 움직이고 일하는 '피지컬 AI' 기술이 대세야! 가사 도우미 로봇부터 산업 현장까지 스스로 행동하는 최신 로봇 기술을 확인해봐.",
+      "title": "현실 세계로 들어온 '피지컬 AI'와 자율형 휴머노이드 로봇 시대",
+      "date": "2026년 10월 최신 뉴스 브리핑",
+      "sourceName": "YTN News",
+      "sourceUrl": "https://www.youtube.com/watch?v=rmyJZiLFvKo",
+      "embedYoutubeId": "rmyJZiLFvKo",
+      "summary": [
+        "소프트웨어 AI가 이제 로봇의 몸체와 결합하는 '피지컬 AI'로 진화하고 있습니다.",
+        "단순 동작을 넘어 주변 환경을 판단하고 물리 작업을 스스로 판단해 수행합니다."
+      ],
+      "deepDive": "AI가 스스로 눈과 판단 능력을 갖고 현실 물리 세계에서 일하는 시대를 '피지컬 AI' 시대라고 부릅니다."
+    },
+    "social": {
+      "badge": "시사 학술 연구 (JAMA Pediatrics / uOttawa)",
+      "cardTitle": "\"학생 5명 중 1명, AI 챗봇과 마음을 나누는 상황… 연구 데이터가 밝힌 장점과 위협은?\"",
+      "cardSummary": "4만 명 대규모 학생 대상 최신 연구 결과(Phys.org 등)! 정서적 대화 상대로 AI를 찾는 학생들이 늘어난 이유와 과순응(Overcompliance)의 위험성을 다각도로 정리해봤어.",
+      "title": "학생 21%가 고민 상담에 AI 활용: 연구로 보는 효과와 과순응 위험성",
+      "cardBadge": "📊 학술 연구 (JAMA Pediatrics)",
+      "question": "AI의 비판 없는 감정 공감(과순응)은 언제 우리에게 도움이 되고, 언제 현실 감각을 약화시킬까?",
+      "date": "2026년 10월 학술 보고",
+      "sourceName": "Phys.org / JAMA Pediatrics",
+      "sourceUrl": "https://phys.org/news/2026-10-students-chatbots-emotional-advice.html",
+      "sections": [
+        {
+          "title": "1. 학생들의 AI 챗봇 이용 현황",
+          "items": [
+            "학생 약 21%가 정서적 조언 및 고민 상담을 위해 AI 챗봇을 이용한 경험이 있음."
+          ]
+        },
+        {
+          "title": "2. 위험성 (과순응 현상)",
+          "items": [
+            "AI가 사용자가 듣고 싶어 하는 말만 무조건 맞춰주거나 해로운 관점까지 긍정해 줄 위험성 존재."
+          ]
+        }
+      ],
+      "deepDive": "인간적인 진정한 공감을 대체할 수 없는 AI의 한계를 이해하고 과순응 현상에 주의해야 합니다."
+    }
+  },
+  "dictionary": {
+    "term": "피지컬 AI (Physical AI)",
+    "body": "모니터 안의 글자나 그림만 생성하던 AI가 인간의 몸체(로봇)를 얻어, 현실 세계를 인식하고 물리적인 행동을 스스로 판단해 수행하는 인공지능 기술을 말해!"
+  },
+  "tip": {
+    "title": "🎯 '역할 정하기' 프롬프트 공식!",
+    "prompt": "너는 친절한 역사 선생님이야",
+    "body": "질문할 때 {prompt}처럼 AI의 역할을 먼저 지정해주면 훨씬 이해하기 쉽고 명확한 답변을 얻을 수 있어!"
+  },
+  "quiz": {
+    "question": "Q. 목표만 주어지면 사람의 연속적인 명령 없이도 스스로 계획을 세워 작업을 해결하는 AI 시스템을 무엇이라고 할까요?",
+    "options": [
+      "1) AI 키보드",
+      "2) AI 에이전트",
+      "3) AI 마우스"
+    ],
+    "correct": 2,
+    "explanation": "🎉 정답: 2번 (AI 에이전트)\n스스로 계획을 세우고 과제를 판단해 완수해내는 자율형 인공지능을 뜻해요!"
+  },
+  "sources": "JAMA Pediatrics, OpenAI, Google DeepMind, Anthropic 공식 발표"
+}

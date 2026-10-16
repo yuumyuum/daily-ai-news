@@ -24,9 +24,16 @@
         html {
             scroll-behavior: smooth;
         }
+        main.is-loading { opacity: 0.4; transition: opacity 0.2s; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col justify-between p-4 md:p-8 max-w-6xl mx-auto relative">
+
+    <!--
+        ※ 이 파일은 "틀(디자인)"만 담당합니다.
+        매일의 내용은 data/YYYY-MM-DD.json 에, 발행 목록은 data/issues.json 에 있습니다.
+        지난 호 바로가기: index.html?date=2026-10-15
+    -->
 
     <header class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 mb-6 text-center relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 via-orange-400 to-sky-400"></div>
@@ -34,23 +41,20 @@
             <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                 ☀️ 1분 AI 아침 신문
             </span>
-            
-            <!-- 날짜 선택 및 버전 관리 컨트롤 -->
+
+            <!-- 날짜 선택 및 버전 관리 컨트롤 (data/issues.json 으로 자동 생성) -->
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
                 <button onclick="changeDate(-1)" title="이전 날짜 신문" class="hover:text-amber-600 transition-colors p-1">◀</button>
                 <div class="flex items-center gap-1.5">
                     <span>📅</span>
                     <select id="date-selector" onchange="selectDate(this.value)" class="bg-white text-slate-800 font-bold border border-slate-300 rounded-md px-2 py-0.5 cursor-pointer outline-none focus:ring-2 focus:ring-amber-400">
-                        <option value="2026-10-16" selected>2026년 10월 16일 (금) - 제143호</option>
-                        <option value="2026-10-15">2026년 10월 15일 (목) - 제142호</option>
-                        <option value="2026-10-14">2026년 10월 14일 (수) - 제141호</option>
-                        <option value="2026-10-13">2026년 10월 13일 (화) - 제140호</option>
+                        <option>불러오는 중...</option>
                     </select>
                 </div>
                 <button onclick="changeDate(1)" title="다음 날짜 신문" class="hover:text-amber-600 transition-colors p-1">▶</button>
             </div>
         </div>
-        
+
         <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight my-2">
             🤖 매일 아침 열리는 <span class="text-amber-500">AI 모닝 리포트</span>
         </h1>
@@ -67,8 +71,10 @@
         </div>
     </header>
 
-    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        
+    <div id="load-error" class="hidden bg-red-50 border border-red-200 text-red-800 text-sm rounded-2xl p-4 mb-6"></div>
+
+    <main id="main" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 is-loading">
+
         <!-- SECTION 1: 3대 AI 빅테크 현황 -->
         <section id="bigtech-section" class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
             <div>
@@ -85,14 +91,10 @@
                             <span class="font-extrabold text-emerald-800 text-sm md:text-base flex items-center gap-1.5">
                                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> OpenAI (오픈AI)
                             </span>
-                            <span class="text-xs text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md font-medium">학습 기능</span>
+                            <span id="openai-tag" class="text-xs text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md font-medium"></span>
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-emerald-600 transition-colors">
-                            정답 대신 질문으로 이끄는 ChatGPT '공부 모드' & 교사용 AI 강좌 확대!
-                        </h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-3">
-                            오픈AI가 바로 답을 알려주기보다 질문·힌트·확인 문제로 스스로 생각하게 돕는 '공부 모드(Study Mode)' 활용법을 소개하고, 선생님을 위한 무료 AI 강좌도 넓혔어!
-                        </p>
+                        <h3 id="openai-title" class="font-bold text-slate-900 text-base mb-1 group-hover:text-emerald-600 transition-colors">불러오는 중...</h3>
+                        <p id="openai-summary" class="text-sm text-slate-600 leading-relaxed mb-3"></p>
                         <div class="flex justify-between items-center text-xs text-emerald-700 font-semibold bg-emerald-100/60 p-2 rounded-lg">
                             <span>🔍 자세한 내용 및 원문 보기</span>
                             <span>➔</span>
@@ -105,14 +107,10 @@
                             <span class="font-extrabold text-sky-800 text-sm md:text-base flex items-center gap-1.5">
                                 <span class="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span> Google Gemini (제미나이)
                             </span>
-                            <span class="text-xs text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md font-medium">과학 연구</span>
+                            <span id="gemini-tag" class="text-xs text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md font-medium"></span>
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-sky-600 transition-colors">
-                            AI 에이전트와 과학자가 함께 '새로운 항생 물질 후보' 찾아냈다!
-                        </h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-3">
-                            구글 딥마인드 연구팀이 AI 에이전트 플랫폼 '안티그래비티(Antigravity)'로 방대한 단백질 데이터 속에서 세균을 물리칠 새 항균 펩타이드 후보를 찾아냈어!
-                        </p>
+                        <h3 id="gemini-title" class="font-bold text-slate-900 text-base mb-1 group-hover:text-sky-600 transition-colors">불러오는 중...</h3>
+                        <p id="gemini-summary" class="text-sm text-slate-600 leading-relaxed mb-3"></p>
                         <div class="flex justify-between items-center text-xs text-sky-700 font-semibold bg-sky-100/60 p-2 rounded-lg">
                             <span>🔍 자세한 내용 및 원문 보기</span>
                             <span>➔</span>
@@ -125,14 +123,10 @@
                             <span class="font-extrabold text-purple-800 text-sm md:text-base flex items-center gap-1.5">
                                 <span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span> Anthropic Claude (클로드)
                             </span>
-                            <span class="text-xs text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md font-medium">안전성 검증</span>
+                            <span id="claude-tag" class="text-xs text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md font-medium"></span>
                         </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-purple-600 transition-colors">
-                            외부 전문 기관에 '직원급 접근 권한' 주고 AI 안전성 검사 맡긴다!
-                        </h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-3">
-                            Anthropic이 비영리 AI 평가 기관 METR 연구원들에게 회사 내부 도구 접근 권한을 주고, 검사 결과를 회사 허락 없이도 공개할 수 있게 했어!
-                        </p>
+                        <h3 id="claude-title" class="font-bold text-slate-900 text-base mb-1 group-hover:text-purple-600 transition-colors">불러오는 중...</h3>
+                        <p id="claude-summary" class="text-sm text-slate-600 leading-relaxed mb-3"></p>
                         <div class="flex justify-between items-center text-xs text-purple-700 font-semibold bg-purple-100/60 p-2 rounded-lg">
                             <span>🔍 자세한 내용 및 원문 보기</span>
                             <span>➔</span>
@@ -151,15 +145,9 @@
                 </div>
 
                 <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl p-5 mb-5 shadow-sm cursor-pointer hover:opacity-95 transition-opacity" onclick="openModal('tech')">
-                    <span class="bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full mb-3 inline-block">
-                        🤖 휴머노이드 & 로보틱스 (최신 영상)
-                    </span>
-                    <h3 class="font-bold text-lg mb-2 text-white">
-                        영상 한 번 보고 '콩주머니 던지기' 배운 휴머노이드 로봇!
-                    </h3>
-                    <p class="text-xs text-indigo-100 leading-relaxed mb-3">
-                        구글 딥마인드의 Gemini 4 Argon이 사람의 게임 영상을 보고 가상 연습장을 만들어 로봇을 훈련시켰더니, 실제 로봇이 7번 연속 성공했어! 영상으로 확인해봐.
-                    </p>
+                    <span id="tech-category" class="bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full mb-3 inline-block"></span>
+                    <h3 id="tech-title" class="font-bold text-lg mb-2 text-white">불러오는 중...</h3>
+                    <p id="tech-summary" class="text-xs text-indigo-100 leading-relaxed mb-3"></p>
                     <div class="text-xs bg-white/10 p-2 rounded text-indigo-100 flex items-center justify-between">
                         <span>🎬 최신 뉴스 영상 시청 & 상세 보기</span>
                         <span>➔</span>
@@ -167,13 +155,13 @@
                 </div>
 
                 <!-- Dictionary Card -->
-                <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                <div id="dictionary-card" class="bg-amber-50 rounded-xl p-4 border border-amber-200">
                     <div class="flex items-center gap-1.5 font-bold text-amber-900 text-sm mb-1.5">
                         💡 <span>쉽게 배우는 AI 용어 사전</span>
                     </div>
                     <p class="text-xs text-amber-800 leading-relaxed">
-                        <strong class="font-bold text-amber-950">'Sim-to-Real (심투리얼)'이란?</strong><br>
-                        로봇을 실제로 움직이기 전, 컴퓨터 속 가상 물리 세계(시뮬레이션)에서 먼저 수천 번 연습시킨 뒤 그 실력을 현실 로봇에 옮기는 기술이야! 비용도 아끼고 로봇이 망가질 위험도 줄일 수 있지.
+                        <strong id="dictionary-term" class="font-bold text-amber-950"></strong><br>
+                        <span id="dictionary-body"></span>
                     </p>
                 </div>
             </div>
@@ -188,22 +176,16 @@
 
             <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-slate-300 transition-all" onclick="openModal('social')">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-0.5 rounded">📊 학술 연구 (UC Berkeley · COLM 2026)</span>
+                    <span id="social-badge" class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-0.5 rounded"></span>
                     <span class="text-xs text-slate-500">논문 및 상세분석 ➔</span>
                 </div>
-                <h3 class="font-bold text-slate-900 text-base md:text-lg mb-2">
-                    "AI 10분 사용에도 끈기가 줄었다?" 1,222명 실험으로 본 AI 의존의 함정
-                </h3>
-                <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                    UC 버클리·카네기멜런·MIT·옥스퍼드·UCLA 공동 연구팀의 무작위 실험 결과! AI 도움을 받다가 갑자기 없어지자 문제를 건너뛰거나 포기하는 경우가 크게 늘었대. 이용 효과·장점·위험성을 다각도로 정리해봤어.
-                </p>
-                <div class="bg-white p-3.5 rounded-lg border border-slate-200 flex items-start gap-3">
+                <h3 id="social-title" class="font-bold text-slate-900 text-base md:text-lg mb-2">불러오는 중...</h3>
+                <p id="social-summary" class="text-sm text-slate-600 leading-relaxed mb-4"></p>
+                <div id="social-question-box" class="bg-white p-3.5 rounded-lg border border-slate-200 flex items-start gap-3">
                     <span class="text-xl">🤔</span>
                     <div>
                         <div class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-0.5">오늘의 핵심 탐구 질문</div>
-                        <p class="text-xs text-slate-700 font-medium">
-                            "AI는 언제 내 실력을 키워주는 '과외 선생님'이 되고, 언제 생각할 기회를 빼앗는 '정답 자판기'가 될까?"
-                        </p>
+                        <p id="social-question" class="text-xs text-slate-700 font-medium"></p>
                     </div>
                 </div>
             </div>
@@ -213,15 +195,12 @@
         <section id="quiz-section" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
             <div>
                 <!-- Learning Tip -->
-                <div class="mb-6">
+                <div id="tip-block" class="mb-6">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-2xl">🛠️</span>
                         <h2 class="text-lg font-bold text-slate-900">오늘의 AI 학습 팁</h2>
                     </div>
-                    <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
-                        <strong class="font-bold text-blue-950 block mb-1">🎯 '정답 말고 힌트부터' 프롬프트 공식!</strong>
-                        AI에게 <span class="bg-white px-1.5 py-0.5 rounded border border-blue-200 font-semibold">[정답은 말하지 말고, 한 번에 하나씩 질문하면서 힌트만 줘]</span>라고 부탁해봐! 스스로 생각할 기회를 지키면서 AI를 과외 선생님처럼 쓸 수 있어.
-                    </div>
+                    <div id="tip-content" class="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed"></div>
                 </div>
 
                 <!-- Quiz Area -->
@@ -232,23 +211,21 @@
                         <span class="text-xs bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full ml-auto">보기를 정답으로 누르세요!</span>
                     </div>
                     <div class="p-4 bg-orange-50 rounded-xl border border-orange-200">
-                        <p class="text-xs font-bold text-orange-950 mb-3 leading-snug">
-                            Q. 로봇을 실제로 움직이기 전, 컴퓨터 속 가상 물리 세계에서 먼저 충분히 연습시킨 뒤 그 실력을 현실 로봇에 옮기는 기술을 무엇이라고 할까요?
-                        </p>
+                        <p id="quiz-question" class="text-xs font-bold text-orange-950 mb-3 leading-snug"></p>
 
                         <!-- Interactive Options Buttons -->
                         <div class="space-y-2 text-xs text-slate-700 mb-3">
                             <button onclick="selectQuizOption(1)" id="option-1" class="w-full text-left p-2.5 bg-white rounded-lg border border-orange-200 hover:border-orange-400 hover:bg-orange-100/50 transition-all font-medium flex items-center justify-between cursor-pointer active:scale-[0.99]">
-                                <span>1) 클라우드 백업</span>
-                                <span id="badge-1" class="hidden text-[10px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded">오답 ❌</span>
+                                <span id="option-text-1"></span>
+                                <span id="badge-1" class="hidden text-[10px] font-bold px-2 py-0.5 rounded"></span>
                             </button>
                             <button onclick="selectQuizOption(2)" id="option-2" class="w-full text-left p-2.5 bg-white rounded-lg border border-orange-200 hover:border-orange-400 hover:bg-orange-100/50 transition-all font-medium flex items-center justify-between cursor-pointer active:scale-[0.99]">
-                                <span>2) 자동 번역</span>
-                                <span id="badge-2" class="hidden text-[10px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded">오답 ❌</span>
+                                <span id="option-text-2"></span>
+                                <span id="badge-2" class="hidden text-[10px] font-bold px-2 py-0.5 rounded"></span>
                             </button>
                             <button onclick="selectQuizOption(3)" id="option-3" class="w-full text-left p-2.5 bg-white rounded-lg border border-orange-200 hover:border-orange-400 hover:bg-orange-100/50 transition-all font-medium flex items-center justify-between cursor-pointer active:scale-[0.99]">
-                                <span>3) Sim-to-Real (심투리얼)</span>
-                                <span id="badge-3" class="hidden text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">정답 ✨</span>
+                                <span id="option-text-3"></span>
+                                <span id="badge-3" class="hidden text-[10px] font-bold px-2 py-0.5 rounded"></span>
                             </button>
                         </div>
 
@@ -256,11 +233,8 @@
                         <button onclick="toggleAnswer()" id="quiz-btn" class="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-lg transition-colors shadow-sm active:scale-95 cursor-pointer flex items-center justify-center gap-1">
                             💡 <span>전체 정답 및 해설 펼치기</span>
                         </button>
-                        
-                        <div id="quiz-answer" class="hidden mt-3 p-3 bg-white rounded-lg border border-orange-300 text-xs text-slate-800 transition-all">
-                            <span class="font-bold text-emerald-600 block mb-1">🎉 정답: 3번 (Sim-to-Real)</span>
-                            시뮬레이션(Sim)에서 익힌 기술을 현실(Real) 로봇에 옮기는 방법이에요. 오늘 소개한 휴머노이드 로봇도 이 방식으로 콩주머니 던지기를 배웠어요!
-                        </div>
+
+                        <div id="quiz-answer" class="hidden mt-3 p-3 bg-white rounded-lg border border-orange-300 text-xs text-slate-800 transition-all"></div>
                     </div>
                 </div>
             </div>
@@ -271,7 +245,7 @@
     <!-- Modal Backdrop -->
     <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div id="modal-container" class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-8 shadow-2xl relative animate-modal">
-            
+
             <button onclick="closeModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold">
                 ✕
             </button>
@@ -284,7 +258,7 @@
 
     <footer class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 text-center text-xs text-slate-500 flex flex-col md:flex-row justify-between items-center gap-3">
         <div class="flex items-center gap-2">
-            <span>📡 데이터 출처: UC Berkeley(COLM 2026), OpenAI, Google DeepMind, Anthropic 공식 발표</span>
+            <span>📡 데이터 출처: <span id="footer-sources"></span></span>
         </div>
         <div class="flex items-center gap-3 font-medium">
             <button onclick="alert('오늘의 리포트에 좋아요를 눌렀어요!')" class="hover:text-amber-600 transition-colors">👍 오늘 내용 유익했어요</button>
@@ -294,465 +268,187 @@
     </footer>
 
     <script>
-        // 날짜별 아카이브 뉴스 데이터베이스 (버전 관리)
-        const dailyArchive = {
-            '2026-10-16': {
-                issueNo: '제 143호',
-                dateText: '2026년 10월 16일 (금요일)',
-                news: {
-                    openai: {
-                        badge: 'OpenAI (오픈AI)',
-                        badgeColor: 'bg-emerald-100 text-emerald-800',
-                        title: '정답 대신 질문으로 이끄는 ChatGPT "공부 모드(Study Mode)" & 교사용 AI 강좌 확대',
-                        summaryText: '오픈AI가 바로 답을 알려주기보다 질문·힌트·확인 문제로 스스로 생각하게 돕는 "공부 모드(Study Mode)" 활용법을 소개하고, 선생님을 위한 무료 AI 강좌도 넓혔어!',
-                        date: '2026년 10월 15일',
-                        sourceName: 'OpenAI 공식 블로그',
-                        sourceUrl: 'https://openai.com/index/teaching-students-to-think-and-learn-through-questions/',
-                        summary: [
-                            'ChatGPT 도구 메뉴에서 "Study(공부)"를 선택하면 질문·힌트·설명·이해도 확인을 섞어 한 단계씩 학습을 안내합니다.',
-                            '교사, 과학자, 교육학 전문가와 함께 개발되어 학생이 능동적으로 참여하고 자신의 생각 과정을 되돌아보도록 설계되었습니다.',
-                            '브라질 "교사의 날"(10월 15일)에 맞춰 무료 학습 플랫폼 OpenAI Academy에 교사용 강좌 "AI for Educators" 포르투갈어판을 공개했습니다. 수업 계획, 활동·평가 만들기를 돕되 교사의 교육적 판단을 중심에 두는 것이 원칙입니다.',
-                            '활용 예시: 효소를 공부하는 학생이 "한 번에 하나씩 질문하고 내 답을 기다린 뒤, 복습할 부분을 알려줘"라고 요청할 수 있어요.'
-                        ],
-                        deepDive: 'AI에게 정답만 받아 적으면 당장은 편하지만 머릿속에 남는 것은 적을 수 있어요. 공부 모드는 AI를 "답안지"가 아니라 "질문을 던지는 과외 선생님"처럼 쓰자는 아이디어예요. 오늘 시사 코너의 UC 버클리 연구와 함께 읽으면 왜 이런 기능이 중요한지 더 잘 이해할 수 있을 거예요.'
-                    },
-                    gemini: {
-                        badge: 'Google Gemini (제미나이)',
-                        badgeColor: 'bg-sky-100 text-sky-800',
-                        title: 'AI 에이전트와 과학자가 함께 "새로운 항생 물질 후보" 찾아냈다!',
-                        summaryText: '구글 딥마인드 연구팀이 AI 에이전트 플랫폼 "안티그래비티(Antigravity)"로 방대한 단백질 데이터 속에서 세균을 물리칠 새 항균 펩타이드 후보를 찾아냈어!',
-                        date: '2026년 10월 15일',
-                        sourceName: 'Google DeepMind 공식 블로그',
-                        sourceUrl: 'https://deepmind.google/blog/accelerating-antimicrobial-discovery/',
-                        summary: [
-                            '과학자가 연구 방향을 정하고, AI 에이전트는 데이터베이스 검색·단백질 구조 분석·논문 정리를 맡아 대화하듯 함께 연구를 진행했습니다.',
-                            '기능이 밝혀지지 않은 채 쌓여 있던 단백질 "암흑 물질" 속에서 아미노산 97개로 이루어진 박테리오신(세균이 만드는 항균 단백질) 후보를 찾아냈습니다.',
-                            'AlphaFold 구조 예측 결과, 실험으로 확인된 기존 항균 단백질과 모양이 매우 닮았다는 근거도 확인했습니다.',
-                            '아직은 컴퓨터 예측 단계로, 현재 실제 실험실(wet-lab)에서 효과를 검증하고 있습니다.'
-                        ],
-                        deepDive: '항생제가 잘 듣지 않는 "슈퍼박테리아"(항생제 내성)는 2050년까지 해마다 약 1,000만 명의 목숨을 앗아갈 수 있는 전 세계적 위협으로 꼽혀요. 핵심은 AI가 혼자 다 해내는 게 아니라 과학자가 질문을 던지고 AI가 방대한 자료 탐색을 돕는 "협업"이라는 점! 그리고 AI의 예측은 반드시 실제 실험으로 확인해야 한다는 것도 꼭 기억해 둬.'
-                    },
-                    claude: {
-                        badge: 'Anthropic Claude (클로드)',
-                        badgeColor: 'bg-purple-100 text-purple-800',
-                        title: 'Anthropic, 외부 전문 기관에 "직원급 접근 권한" 주고 AI 안전성 검사 맡긴다',
-                        summaryText: 'Anthropic이 비영리 AI 평가 기관 METR 연구원들에게 회사 내부 도구 접근 권한을 주고, 검사 결과를 회사 허락 없이도 공개할 수 있게 했어!',
-                        date: '2026년 10월 15일',
-                        sourceName: 'Anthropic Newsroom',
-                        sourceUrl: 'https://www.anthropic.com/news/an-update-on-independent-evaluators',
-                        summary: [
-                            '비영리 AI 평가 기관 METR의 연구원 6명이 Anthropic 내부 위험 평가팀과 비슷한 수준의 장비·사무 공간·내부 도구를 사용합니다.',
-                            'Anthropic은 결과 공개를 막을 수 없고, 고객 데이터나 모델 구조 같은 좁은 범위만 가려 달라고(비공개 처리) 요구할 수 있습니다.',
-                            '외부 평가 기관의 접근 권한과 공개 자유도를 3단계로 나눈 기준을 발표했습니다.',
-                            '생물·화학 안전 분야의 SecureBio, Accenture·Faculty 등과도 협력하고 있으며 Hugging Face와는 초기 논의 중입니다.'
-                        ],
-                        deepDive: '시험을 본 학생이 자기 답안을 스스로 채점한다면 그 점수를 믿기 어렵겠죠? AI 회사도 마찬가지로, 강력한 AI가 안전한지 회사 밖 독립 전문가가 검사하는 것이 중요해요. Anthropic은 이를 은행 안에 감독관이 상주하며 살펴보는 방식에 비유했어요. 이번 참여는 자발적인 것이며, 회사는 모든 최첨단 AI 기업이 똑같이 해야 한다고 밝혔어요.'
-                    },
-                    tech: {
-                        badge: '신기술 탐구 (최신 영상)',
-                        badgeColor: 'bg-indigo-100 text-indigo-800',
-                        title: '사람 영상 → 가상 연습 → 실제 성공! "Video-to-Sim-to-Real"로 기술 익히는 휴머노이드',
-                        summaryText: '구글 딥마인드의 Gemini 4 Argon이 사람의 게임 영상을 보고 가상 연습장을 만들어 로봇을 훈련시켰더니, 실제 로봇이 7번 연속 성공했어! 영상으로 확인해봐.',
-                        date: '2026년 10월 13일 공개 영상',
-                        sourceName: 'Google DeepMind 공식 YouTube',
-                        sourceUrl: 'https://www.youtube.com/watch?v=9PICEmtfpWU',
-                        embedYoutubeId: '9PICEmtfpWU',
-                        summary: [
-                            'Gemini 4 Argon이 사람이 콘홀(구멍에 콩주머니 던지기 게임)을 하는 영상을 보고, MuJoCo라는 물리 시뮬레이션 안에 똑같은 환경을 만들었습니다.',
-                            '휴머노이드 로봇(Apptronik Apollo)은 가상 세계에서 충분히 연습한 뒤, 실제 세상에서 7번 연속 명중에 성공했습니다.',
-                            '사진 한 장으로 연습 환경을 만들어 실제 로봇의 작업 성공률을 56%에서 75%로 끌어올린 사례도 소개됐습니다.',
-                            '반면 같은 주 공개된 로봇 벤치마크(AA-Robotics, 연구 미리보기·독립 검증 전)에서는 AI 모델들이 스스로 걷고 균형 잡는 휴머노이드 과제에서 100점 만점에 2점도 넘지 못했다고 보도됐어요. 아직 갈 길이 멀다는 뜻이죠!'
-                        ],
-                        deepDive: '사람은 자전거를 배울 때 수없이 넘어지며 익히지만, 비싼 로봇이 넘어지면 고장 날 수 있어요. 그래서 컴퓨터 속 가상 세계에서 먼저 수천 번 연습한 뒤 실제 로봇에 옮기는 "Sim-to-Real" 방식이 피지컬 AI의 핵심 기술로 주목받고 있어요. 이번 시연의 포인트는 몇 주씩 걸리던 수작업 모델링을 몇 시간으로 줄였다는 점이에요.'
-                    },
-                    social: {
-                        badge: '시사 학술 연구 (UC Berkeley 외 / COLM 2026)',
-                        badgeColor: 'bg-amber-100 text-amber-800',
-                        title: '"AI 10분 사용에도 끈기가 줄었다?" 1,222명 실험으로 본 AI 의존의 함정',
-                        summaryText: 'UC 버클리·카네기멜런·MIT·옥스퍼드·UCLA 공동 연구팀의 무작위 실험 결과! AI 도움을 받다가 갑자기 없어지자 문제를 건너뛰거나 포기하는 경우가 크게 늘었대.',
-                        date: '2026년 10월 9일 보도 (COLM 2026 발표)',
-                        sourceName: 'Berkeley News / arXiv 2604.04721',
-                        sourceUrl: 'https://news.berkeley.edu/2026/10/09/using-ai-for-just-10-minutes-erodes-your-ability-to-persist-at-hard-things/',
-                        sections: [
-                            {
-                                title: '1. 연구 방법 (AI 이용 실험 설계)',
-                                items: [
-                                    '3번의 무작위 통제 실험, 총 1,222명의 온라인 참가자가 참여했습니다.',
-                                    '분수 문제(354명, 667명)와 SAT 독해 문제(201명)를 풀게 하고, 한 그룹은 ChatGPT에게 정답을 물어볼 수 있게, 다른 그룹은 혼자 풀게 했습니다.',
-                                    '문제를 풀던 중간에 AI 도구를 갑자기 없앤 뒤 두 그룹을 비교했습니다.'
-                                ]
-                            },
-                            {
-                                title: '2. 주요 장점',
-                                items: ['AI를 쓸 수 있는 동안에는 AI 그룹의 정답률이 혼자 푼 그룹보다 더 높게 출발했습니다.']
-                            },
-                            {
-                                title: '3. 위험성 (의존과 끈기 저하)',
-                                items: [
-                                    'AI가 사라지자 AI 그룹의 정확도가 거의 즉시 떨어졌습니다.',
-                                    'AI 그룹은 문제를 건너뛰거나 포기하는 비율이 크게 늘었지만, 혼자 푼 그룹은 꾸준히 끝까지 풀었습니다.',
-                                    '독해 문제에서도 같은 패턴이 나타났고, 연구진은 실력을 키우는 "생산적 고군분투"의 기회가 사라질 수 있다고 우려했습니다.'
-                                ]
-                            },
-                            {
-                                title: '4. 연구의 한계와 제안',
-                                items: [
-                                    '약 10분간의 짧은 온라인 과제여서 교실이나 장기간 학습에서의 효과는 아직 알 수 없습니다.',
-                                    '"힌트만 주는 AI"와 "정답을 주는 AI"를 직접 비교한 실험은 아닙니다.',
-                                    '공동 저자 브라이언 크리스천은 AI가 빠른 정답 대신 과외 선생님처럼 가르치는 응답을 기본으로 하도록 설계해야 한다고 제안했습니다.'
-                                ]
-                            }
-                        ],
-                        deepDive: '어려운 문제와 씨름하는 시간은 답답하지만, 바로 그 시간에 실력이 자라요. 이 연구는 "AI를 쓰지 말라"가 아니라 "어떻게 쓰느냐"가 중요하다는 걸 보여줘요. 오늘 오픈AI 뉴스의 공부 모드처럼 정답보다 힌트와 질문을 요청하는 습관을 들여 보자!'
-                    }
-                },
-                quiz: {
-                    question: 'Q. 로봇을 실제로 움직이기 전, 컴퓨터 속 가상 물리 세계에서 먼저 충분히 연습시킨 뒤 그 실력을 현실 로봇에 옮기는 기술을 무엇이라고 할까요?',
-                    options: ['1) 클라우드 백업', '2) 자동 번역', '3) Sim-to-Real (심투리얼)'],
-                    correct: 3,
-                    explanation: '🎉 정답: 3번 (Sim-to-Real)\n시뮬레이션(Sim)에서 익힌 기술을 현실(Real) 로봇에 옮기는 방법이에요. 오늘 소개한 휴머노이드 로봇도 이 방식으로 콩주머니 던지기를 배웠어요!'
-                }
-            },
-            '2026-10-15': {
-                issueNo: '제 142호',
-                dateText: '2026년 10월 15일 (목요일)',
-                news: {
-                    openai: {
-                        badge: 'OpenAI (오픈AI)',
-                        badgeColor: 'bg-emerald-100 text-emerald-800',
-                        title: '청소년 전용 ChatGPT 안전 가이드 및 최신 프레임워크 공개',
-                        summaryText: '학생들이 AI를 해로운 용도 없이 안전하게 사용할 수 있도록 청소년 보호 가이드라인을 대폭 늘렸어! 최신 모델 보안 체계도 한층 더 탄탄해지고 있지.',
-                        date: '2026년 10월 15일',
-                        sourceName: 'The Guardian / OpenAI Official Center',
-                        sourceUrl: 'https://www.google.com/search?q=OpenAI+safety+guidelines+for+teenagers+2026',
-                        summary: [
-                            '학생들이 안전하게 AI를 이용할 수 있도록 개인정보 보호 및 유해 콘텐츠 차단 가이드라인이 신설되었습니다.',
-                            '학교 및 가정에서 안전하게 사용할 수 있는 청소년 계정 맞춤형 필터링 기술이 적용됩니다.',
-                            'AI 모델이 부적절한 대답을 유도하는 질문에 대해 스스로 거절하는 성능이 향상되었습니다.'
-                        ],
-                        deepDive: '최근 AI 모델이 더욱 똑똑해짐에 따라 청소년의 학습을 돕는 유익함도 크지만, 잘못된 정보를 전달하거나 위험한 대화를 나누는 상황을 방지하기 위한 조치입니다.'
-                    },
-                    gemini: {
-                        badge: 'Google Gemini (제미나이)',
-                        badgeColor: 'bg-sky-100 text-sky-800',
-                        title: '스스로 장시간 코딩하고 심층 업무 돕는 \'Gemini 4 Argon\' 모델 출시!',
-                        summaryText: '구글이 스스로 오류를 고치며 장시간 복잡한 코딩과 전문 업무를 해결해 내는 차세대 AI 모델 \'제미나이 4 아르곤(Argon)\'을 전격 공개했어!',
-                        date: '2026년 10월 14일',
-                        sourceName: 'Google DeepMind Official',
-                        sourceUrl: 'https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/',
-                        summary: [
-                            '구글이 복잡한 코딩과 금융, 법률 문제 해결에 특화된 차세대 AI 모델 \'Gemini 4 Argon\'을 공개했습니다.',
-                            '수십만 줄의 코드를 스스로 분석하고, 테스트 후 오류까지 재수정하는 능력이 향상되었습니다.'
-                        ],
-                        deepDive: '사람이 목표만 주면 수 시간에 걸쳐 계획을 세우고, 코딩하고, 스스로 테스트까지 완료하는 자율형 심층 AI 모델입니다.'
-                    },
-                    claude: {
-                        badge: 'Anthropic Claude (클로드)',
-                        badgeColor: 'bg-purple-100 text-purple-800',
-                        title: '2026 미국 중간선거 대비 공식 투표 정보 제공 및 선거 안전장치 강화!',
-                        summaryText: 'Anthropic이 2026년 선거를 앞두고 챗봇 Claude에 주별 유권자 등록 및 투표 정보를 정확히 안내하는 기능을 전격 탑재했어!',
-                        date: '2026년 10월 15일',
-                        sourceName: 'Anthropic Newsroom',
-                        sourceUrl: 'https://www.anthropic.com/news/2026-us-midterms',
-                        summary: [
-                            '챗봇 Claude에 직접 주별 유권자 등록 및 투표소 안내 기능을 탑재했습니다.',
-                            '가짜 뉴스 대량 생성을 예방하는 선거 안전 시스템을 적용했습니다.'
-                        ],
-                        deepDive: 'AI가 유권자에게 왜곡된 정보를 전달하는 것을 막고 정확한 유권자 안내만을 다루도록 구성되었습니다.'
-                    },
-                    tech: {
-                        badge: '신기술 탐구 (최신 영상)',
-                        badgeColor: 'bg-indigo-100 text-indigo-800',
-                        title: '현실 세계로 들어온 \'피지컬 AI\'와 자율형 휴머노이드 로봇 시대',
-                        summaryText: 'AI가 화면 속 대화를 넘어 직접 움직이고 일하는 \'피지컬 AI\' 기술이 대세야! 가사 도우미 로봇부터 산업 현장까지 스스로 행동하는 최신 로봇 기술을 확인해봐.',
-                        date: '2026년 10월 최신 뉴스 브리핑',
-                        sourceName: 'YTN News',
-                        sourceUrl: 'https://www.youtube.com/watch?v=rmyJZiLFvKo',
-                        embedYoutubeId: 'rmyJZiLFvKo',
-                        summary: [
-                            '소프트웨어 AI가 이제 로봇의 몸체와 결합하는 \'피지컬 AI\'로 진화하고 있습니다.',
-                            '단순 동작을 넘어 주변 환경을 판단하고 물리 작업을 스스로 판단해 수행합니다.'
-                        ],
-                        deepDive: 'AI가 스스로 눈과 판단 능력을 갖고 현실 물리 세계에서 일하는 시대를 \'피지컬 AI\' 시대라고 부릅니다.'
-                    },
-                    social: {
-                        badge: '시사 학술 연구 (JAMA Pediatrics / uOttawa)',
-                        badgeColor: 'bg-amber-100 text-amber-800',
-                        title: '학생 21%가 고민 상담에 AI 활용: 연구로 보는 효과와 과순응 위험성',
-                        summaryText: '4만 명 대규모 학생 대상 최신 연구 결과! 정서적 대화 상대로 AI를 찾는 학생들이 늘어난 이유와 과순응(Overcompliance)의 위험성을 정리해봤어.',
-                        date: '2026년 10월 학술 보고',
-                        sourceName: 'Phys.org / JAMA Pediatrics',
-                        sourceUrl: 'https://phys.org/news/2026-10-students-chatbots-emotional-advice.html',
-                        sections: [
-                            {
-                                title: '1. 학생들의 AI 챗봇 이용 현황',
-                                items: ['학생 약 21%가 정서적 조언 및 고민 상담을 위해 AI 챗봇을 이용한 경험이 있음.']
-                            },
-                            {
-                                title: '2. 위험성 (과순응 현상)',
-                                items: ['AI가 사용자가 듣고 싶어 하는 말만 무조건 맞춰주거나 해로운 관점까지 긍정해 줄 위험성 존재.']
-                            }
-                        ],
-                        deepDive: '인간적인 진정한 공감을 대체할 수 없는 AI의 한계를 이해하고 과순응 현상에 주의해야 합니다.'
-                    }
-                },
-                quiz: {
-                    question: 'Q. 목표만 주어지면 사람의 연속적인 명령 없이도 스스로 계획을 세워 작업을 해결하는 AI 시스템을 무엇이라고 할까요?',
-                    options: ['1) AI 키보드', '2) AI 에이전트', '3) AI 마우스'],
-                    correct: 2,
-                    explanation: '🎉 정답: 2번 (AI 에이전트)\n스스로 계획을 세우고 과제를 판단해 완수해내는 자율형 인공지능을 뜻해요!'
-                }
-            },
-            '2026-10-14': {
-                issueNo: '제 141호',
-                dateText: '2026년 10월 14일 (수요일)',
-                news: {
-                    openai: {
-                        badge: 'OpenAI (오픈AI)',
-                        badgeColor: 'bg-emerald-100 text-emerald-800',
-                        title: '오픈AI, 교사를 위한 AI 수업 보조 도구 모듈 전격 배포',
-                        summaryText: '선생님들이 수업 자료를 훨씬 쉽고 빠르게 만들 수 있는 교사용 AI 어시스턴트 기능이 업데이트되었어!',
-                        date: '2026년 10월 14일',
-                        sourceName: 'OpenAI Education',
-                        sourceUrl: 'https://openai.com',
-                        summary: [
-                            '교사들의 맞춤형 학습 자료 작성을 지원하는 전용 템플릿 제작.',
-                            '학생 수준별 평가 문제를 자동으로 다변화하여 생성하는 기능 수록.'
-                        ],
-                        deepDive: '교사의 업무 부담을 줄이고 학생 개개인에게 맞춤형 교육을 전달하는 데 큰 도움이 됩니다.'
-                    },
-                    gemini: {
-                        badge: 'Google Gemini (제미나이)',
-                        badgeColor: 'bg-sky-100 text-sky-800',
-                        title: '구글 워크스페이스 실시간 실시간 음성 번역 기능 통합',
-                        summaryText: '화상 회의나 수업 중 상대방 언어를 내 실시간 한국어 음성으로 즉시 번역해주는 기술이 도입됐어.',
-                        date: '2026년 10월 14일',
-                        sourceName: 'Google Workspace',
-                        sourceUrl: 'https://workspace.google.com',
-                        summary: [
-                            '다국어 화상 수업 및 인터뷰 시 실시간 다국어 음성 통역 기능 탑재.',
-                            '자연스러운 목소리 톤을 유지하면서 통역하는 기술 적용.'
-                        ],
-                        deepDive: '언어 장벽 없는 글로벌 교류 수업이 교실 안에서 손쉽게 가능해집니다.'
-                    },
-                    claude: {
-                        badge: 'Anthropic Claude (클로드)',
-                        badgeColor: 'bg-purple-100 text-purple-800',
-                        title: '코딩 및 수학 문제 해설 논리적 추론력 강화',
-                        summaryText: '복잡한 풀이 과정이 필요한 수학 문제를 단계별로 친절하게 설명해주는 능력이 크게 좋아졌어!',
-                        date: '2026년 10월 14일',
-                        sourceName: 'Anthropic',
-                        sourceUrl: 'https://www.anthropic.com',
-                        summary: [
-                            '정답만 내놓는 것이 아닌 과정 중심의 논리적 해설 능력을 고도화.',
-                            '학생이 틀린 단계를 직접 찾아 교정해주는 피드백 로직 개선.'
-                        ],
-                        deepDive: '단순 답안지가 아닌 1:1 수학 튜터로서 정교한 학습 조력자 역할을 수행합니다.'
-                    },
-                    tech: {
-                        badge: '신기술 탐구',
-                        badgeColor: 'bg-indigo-100 text-indigo-800',
-                        title: '초경량 온디바이스 AI 칩 탑재 스마트 안경 탑재',
-                        summaryText: '인터넷 연결 없이도 내 눈앞의 사물을 즉시 설명해주는 스마트 글래스용 AI 기술이 선보였어!',
-                        date: '2026년 10월 14일',
-                        sourceName: 'TechCrunch',
-                        sourceUrl: 'https://techcrunch.com',
-                        summary: [
-                            '클라우드 연결 없이 기기 내부 칩으로 실시간 인지 및 안내.',
-                            '시각 장애인 및 학습 조력 도구로의 활용 가능성 증대.'
-                        ],
-                        deepDive: '네트워크 장애 걱정 없이 언제 어디서나 AI 지능을 사용하는 온디바이스 AI의 대표 사례입니다.'
-                    },
-                    social: {
-                        badge: 'AI 윤리 이슈',
-                        badgeColor: 'bg-amber-100 text-amber-800',
-                        title: 'AI 저작권 및 이미지 생성물의 표기 의무화 법안 논의',
-                        summaryText: 'AI가 만든 이미지나 영상에 \'AI 제작 워터마크\'를 의무적으로 붙이도록 하는 새로운 법안들이 만들어지고 있어.',
-                        date: '2026년 10월 14일',
-                        sourceName: 'AI Law Review',
-                        sourceUrl: 'https://law.go.kr',
-                        sections: [
-                            {
-                                title: '1. 디저털 투명성 확보',
-                                items: ['진짜 사진과 AI 합성 사진을 쉽게 구분하기 위한 워터마크 기술 표기 의무화.']
-                            }
-                        ],
-                        deepDive: '가짜 뉴스나 딥페이크 피해를 방지하고 디지털 윤리를 지키기 위한 중요한 사회적 기준이 됩니다.'
-                    }
-                },
-                quiz: {
-                    question: 'Q. 인터넷 연결 없이 스마트폰이나 로봇 기기 자체 내에 탑재되어 작동하는 AI 기술을 무엇이라고 할까요?',
-                    options: ['1) 클라우드 AI', '2) 온디바이스 AI', '3) 아웃도어 AI'],
-                    correct: 2,
-                    explanation: '🎉 정답: 2번 (온디바이스 AI)\n기기(Device) 자체에 AI 알고리즘이 들어있어 빠르게 작동하는 기술입니다!'
-                }
-            },
-            '2026-10-13': {
-                issueNo: '제 140호',
-                dateText: '2026년 10월 13일 (화요일)',
-                news: {
-                    openai: {
-                        badge: 'OpenAI (오픈AI)',
-                        badgeColor: 'bg-emerald-100 text-emerald-800',
-                        title: 'ChatGPT 대화 기반 맞춤형 오디오 일기 도구 테스트',
-                        summaryText: '하루 동안의 학습과 감정을 대화로 주고받으면 자동으로 예쁜 일기 형식으로 작성해주는 오디오 기능이 등장했어.',
-                        date: '2026년 10월 13일',
-                        sourceName: 'OpenAI Blog',
-                        sourceUrl: 'https://openai.com',
-                        summary: ['음성 대화만으로 하루 일과와 감정을 스스로 정리하고 기록해주는 감성 AI 라이팅 툴'],
-                        deepDive: '글쓰기가 서툰 어린 학생들도 말하기를 통해 생각을 정돈하고 일기를 완성하는 경험을 선사합니다.'
-                    },
-                    gemini: {
-                        badge: 'Google Gemini (제미나이)',
-                        badgeColor: 'bg-sky-100 text-sky-800',
-                        title: '유튜브 스튜디오 연동 학습용 요약 챕터 자동 생성 기능',
-                        summaryText: '긴 교육용 동영상도 AI가 자동으로 핵심 주제별로 단락을 나누고 한 줄 요약을 달아주는 기능이 추가되었어!',
-                        date: '2026년 10월 13일',
-                        sourceName: 'Google YouTube Blog',
-                        sourceUrl: 'https://youtube.com',
-                        summary: ['영상 콘텐츠의 핵심 구간 분석 및 타임라인 자동 정리 기능 제공'],
-                        deepDive: '긴 강의 영상도 필요한 부분만 빠르게 골라 공부할 수 있어 학습 효율이 극대화됩니다.'
-                    },
-                    claude: {
-                        badge: 'Anthropic Claude (클로드)',
-                        badgeColor: 'bg-purple-100 text-purple-800',
-                        title: '데이터 보안 강화를 위한 프라이버시 보호 보고서 공개',
-                        summaryText: '사용자가 입력한 학습 데이터나 대화 내용이 모델 학습에 절대 무단 사용되지 않는 완전 비공개 모드를 강화했어.',
-                        date: '2026년 10월 13일',
-                        sourceName: 'Anthropic Trust',
-                        sourceUrl: 'https://www.anthropic.com',
-                        summary: ['개인정보 및 학교 관련 데이터 보호를 위한 철저한 암호화 정책 발표'],
-                        deepDive: '학교와 기업에서 안심하고 AI 시스템을 도입할 수 있도록 개인정보 보안 기준을 극대화했습니다.'
-                    },
-                    tech: {
-                        badge: '신기술 탐구',
-                        badgeColor: 'bg-indigo-100 text-indigo-800',
-                        title: '실시간 통번역 Earbuds AI 이어폰 보급 확대',
-                        summaryText: '귀에 꽂기만 하면 외국어 수업이나 대화를 지연 없이 바로 내 귀에 한국어로 들려주는 AI 이어폰 소식이야.',
-                        date: '2026년 10월 13일',
-                        sourceName: 'Gizmodo',
-                        sourceUrl: 'https://gizmodo.com',
-                        summary: ['외국어 음성을 실시간 음성으로 동시 통역하여 전달하는 오디오 칩 기술'],
-                        deepDive: '글로벌 교류와 외국어 학습의 패러다임을 바꿀 인공지능 오디오 기술입니다.'
-                    },
-                    social: {
-                        badge: 'AI 사회 동향',
-                        badgeColor: 'bg-amber-100 text-amber-800',
-                        title: '전국 초·중·고 AI 디지털 교과서 시범 수업 성과 발표',
-                        summaryText: 'AI 교과서를 시범 사용한 학급에서 학생들의 자기주도 학습 시간이 크게 늘어났다는 결과가 나왔어.',
-                        date: '2026년 10월 13일',
-                        sourceName: 'EduNews',
-                        sourceUrl: 'https://moe.go.kr',
-                        sections: [
-                            {
-                                title: '1. 맞춤형 진단',
-                                items: ['학생별로 틀린 문제를 진단해 개인별 보충 문제를 자동 제공함.']
-                            }
-                        ],
-                        deepDive: '모든 학생이 자신의 속도에 맞춰 공부할 수 있는 미래형 맞춤 교실의 가능성을 보여줍니다.'
-                    }
-                },
-                quiz: {
-                    question: 'Q. AI가 영상이나 문서를 읽고 핵심 내용만 짧게 줄여서 보여주는 기능을 무엇이라고 할까요?',
-                    options: ['1) 텍스트 확장', '2) 자동 요약', '3) 자동 번역'],
-                    correct: 2,
-                    explanation: '🎉 정답: 2번 (자동 요약)\n복잡하고 긴 글이나 영상의 핵심을 알아서 뽑아내는 AI의 대표 기능입니다!'
-                }
-            }
+        // ─────────────────────────────────────────────
+        // 데이터 구조
+        //   data/issues.json        : [{date, issueNo, weekday}, ...] (최신순)
+        //   data/YYYY-MM-DD.json    : 그날의 신문 한 호
+        // ─────────────────────────────────────────────
+        const DATA_DIR = 'data';
+        const BADGE_COLORS = {
+            openai: 'bg-emerald-100 text-emerald-800',
+            gemini: 'bg-sky-100 text-sky-800',
+            claude: 'bg-purple-100 text-purple-800',
+            tech: 'bg-indigo-100 text-indigo-800',
+            social: 'bg-amber-100 text-amber-800'
         };
 
-        // Current active date
-        let currentDateKey = '2026-10-16';
-        let newsData = dailyArchive[currentDateKey].news;
+        let issueList = [];          // issues.json
+        const issueCache = {};       // 날짜별로 한 번 불러온 호 저장
+        let currentDateKey = null;
+        let currentIssue = null;
+        let newsData = {};
+
+        // HTML 특수문자 처리 (데이터는 AI가 만든 텍스트이므로 그대로 HTML로 넣지 않음)
+        function esc(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function safeUrl(url) {
+            return /^https?:\/\//i.test(url || '') ? url : '#';
+        }
+        function setText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text ?? '';
+        }
+        function toggle(id, show) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden', !show);
+        }
+        function formatDate(entry) {
+            const [y, m, d] = entry.date.split('-').map(Number);
+            return `${y}년 ${m}월 ${d}일 (${entry.weekday}) - 제${entry.issueNo}호`;
+        }
+
+        async function fetchJson(path) {
+            const res = await fetch(path, { cache: 'no-cache' });
+            if (!res.ok) throw new Error(`${path} (${res.status})`);
+            return res.json();
+        }
+
+        function showError(message) {
+            const box = document.getElementById('load-error');
+            box.textContent = message;
+            box.classList.remove('hidden');
+        }
+
+        // 첫 실행: 발행 목록 → 드롭다운 → 주소(?date=)의 호 또는 최신 호
+        async function init() {
+            try {
+                issueList = await fetchJson(`${DATA_DIR}/issues.json`);
+                issueList.sort((a, b) => b.date.localeCompare(a.date));
+            } catch (e) {
+                showError('신문 목록을 불러오지 못했어요. (파일을 직접 열었다면 웹 서버로 열어 주세요) ' + e.message);
+                return;
+            }
+
+            const selector = document.getElementById('date-selector');
+            selector.innerHTML = issueList
+                .map(entry => `<option value="${esc(entry.date)}">${esc(formatDate(entry))}</option>`)
+                .join('');
+
+            const requested = new URLSearchParams(location.search).get('date');
+            const start = issueList.some(e => e.date === requested) ? requested : issueList[0]?.date;
+            if (start) await selectDate(start, { replaceUrl: true });
+        }
 
         // 날짜 변경 함수 (드롭다운)
-        function selectDate(dateKey) {
-            if (!dailyArchive[dateKey]) return;
+        async function selectDate(dateKey, { replaceUrl = false } = {}) {
+            if (!issueList.some(e => e.date === dateKey)) return;
+            const main = document.getElementById('main');
+            main.classList.add('is-loading');
+            try {
+                if (!issueCache[dateKey]) {
+                    issueCache[dateKey] = await fetchJson(`${DATA_DIR}/${dateKey}.json`);
+                }
+            } catch (e) {
+                showError(`${dateKey} 신문을 불러오지 못했어요. ` + e.message);
+                main.classList.remove('is-loading');
+                return;
+            }
+            toggle('load-error', false);
             currentDateKey = dateKey;
+            currentIssue = issueCache[dateKey];
+            newsData = currentIssue.news;
+            document.getElementById('date-selector').value = dateKey;
+
+            const url = new URL(location.href);
+            if (dateKey === issueList[0].date) url.searchParams.delete('date');
+            else url.searchParams.set('date', dateKey);
+            history[replaceUrl ? 'replaceState' : 'pushState']({ date: dateKey }, '', url);
+
             updateArticleView();
+            main.classList.remove('is-loading');
         }
 
-        // 이전/다음 날짜 버튼
+        // 이전/다음 날짜 버튼 (-1: 이전 날짜, +1: 다음 날짜)
         function changeDate(offset) {
-            const keys = Object.keys(dailyArchive).sort().reverse();
-            const currentIndex = keys.indexOf(currentDateKey);
+            const currentIndex = issueList.findIndex(e => e.date === currentDateKey);
             const nextIndex = currentIndex - offset;
-
-            if (nextIndex >= 0 && nextIndex < keys.length) {
-                const targetKey = keys[nextIndex];
-                document.getElementById('date-selector').value = targetKey;
-                selectDate(targetKey);
+            if (nextIndex >= 0 && nextIndex < issueList.length) {
+                selectDate(issueList[nextIndex].date);
             }
         }
+
+        window.addEventListener('popstate', () => {
+            const requested = new URLSearchParams(location.search).get('date') || issueList[0]?.date;
+            if (requested && requested !== currentDateKey) selectDate(requested, { replaceUrl: true });
+        });
 
         // 선택된 날짜 데이터로 화면 갱신
         function updateArticleView() {
-            const archive = dailyArchive[currentDateKey];
-            newsData = archive.news;
+            const issue = currentIssue;
 
-            // 1. 헤더 날짜 갱신
-            const issueElements = document.querySelectorAll('.newspaper-border .text-slate-500');
-            if (issueElements.length > 0) {
-                issueElements[0].innerText = `📅 ${archive.dateText} | ${archive.issueNo}`;
-            }
-
-            // 2. 카드의 헤드라인 및 요약 문구 업데이트
-            const setCardContent = (key, title, summary) => {
-                const card = document.querySelector(`[onclick="openModal('${key}')"]`);
-                if (card) {
-                    const h3 = card.querySelector('h3');
-                    const p = card.querySelector('p');
-                    if (h3) h3.innerText = title;
-                    if (p) p.innerText = summary;
-                }
-            };
-
-            setCardContent('openai', newsData.openai.title, newsData.openai.summaryText);
-            setCardContent('gemini', newsData.gemini.title, newsData.gemini.summaryText);
-            setCardContent('claude', newsData.claude.title, newsData.claude.summaryText);
-            setCardContent('tech', newsData.tech.title, newsData.tech.summaryText);
-            setCardContent('social', newsData.social.title, newsData.social.summaryText);
-
-            // 3. 퀴즈 영역 업데이트
-            const quizData = archive.quiz;
-            const quizQuestionEl = document.querySelector('#quiz-section p');
-            if (quizQuestionEl) quizQuestionEl.innerText = quizData.question;
-
-            [1, 2, 3].forEach((num, idx) => {
-                const optBtn = document.getElementById(`option-${num}`);
-                if (optBtn) {
-                    const span = optBtn.querySelector('span:first-child');
-                    if (span) span.innerText = quizData.options[idx];
-                    
-                    // 정답 배지 변경
-                    const badge = document.getElementById(`badge-${num}`);
-                    if (badge) {
-                        if (num === quizData.correct) {
-                            badge.className = "hidden text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded";
-                            badge.innerText = "정답 ✨";
-                        } else {
-                            badge.className = "hidden text-[10px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded";
-                            badge.innerText = "오답 ❌";
-                        }
-                    }
-                }
+            // 1. 빅테크 카드 3종
+            ['openai', 'gemini', 'claude'].forEach(key => {
+                const item = newsData[key] || {};
+                setText(`${key}-tag`, item.tag);
+                toggle(`${key}-tag`, !!item.tag);
+                setText(`${key}-title`, item.cardTitle || item.title);
+                setText(`${key}-summary`, item.cardSummary || item.summaryText);
             });
 
-            // 퀴즈 해설 내용 업데이트
-            const quizAnswerBox = document.getElementById('quiz-answer');
-            if (quizAnswerBox) {
-                quizAnswerBox.innerHTML = `<span class="font-bold text-emerald-600 block mb-1">🎉 해설</span>${quizData.explanation.replace('\n', '<br>')}`;
+            // 2. 신기술 카드 + 용어 사전
+            const tech = newsData.tech || {};
+            setText('tech-category', tech.category || '🚀 신기술 탐구');
+            setText('tech-title', tech.cardTitle || tech.title);
+            setText('tech-summary', tech.cardSummary || tech.summaryText);
+            const dict = issue.dictionary;
+            toggle('dictionary-card', !!dict);
+            if (dict) {
+                setText('dictionary-term', `'${dict.term}'이란?`);
+                setText('dictionary-body', dict.body);
             }
 
-            // 초기화
-            if (typeof toggleAnswer === 'function') {
-                const answerBox = document.getElementById('quiz-answer');
-                if (answerBox && !answerBox.classList.contains('hidden')) {
-                    toggleAnswer(false);
-                } else {
-                    resetQuizOptions();
-                }
+            // 3. 시사 & 논문 카드
+            const social = newsData.social || {};
+            setText('social-badge', social.cardBadge || social.badge);
+            setText('social-title', social.cardTitle || social.title);
+            setText('social-summary', social.cardSummary || social.summaryText);
+            toggle('social-question-box', !!social.question);
+            setText('social-question', social.question ? `"${social.question}"` : '');
+
+            // 4. 학습 팁 ({prompt} 자리에 강조 칩 표시)
+            const tip = issue.tip;
+            toggle('tip-block', !!tip);
+            if (tip) {
+                const chip = `<span class="bg-white px-1.5 py-0.5 rounded border border-blue-200 font-semibold">[${esc(tip.prompt)}]</span>`;
+                const body = esc(tip.body).replace('{prompt}', chip);
+                document.getElementById('tip-content').innerHTML =
+                    `<strong class="font-bold text-blue-950 block mb-1">${esc(tip.title)}</strong>${body}`;
             }
+
+            // 5. 퀴즈
+            const quiz = issue.quiz;
+            setText('quiz-question', quiz.question);
+            [1, 2, 3].forEach((num, idx) => {
+                setText(`option-text-${num}`, quiz.options[idx]);
+                const badge = document.getElementById(`badge-${num}`);
+                if (num === quiz.correct) {
+                    badge.className = 'hidden text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded';
+                    badge.textContent = '정답 ✨';
+                } else {
+                    badge.className = 'hidden text-[10px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded';
+                    badge.textContent = '오답 ❌';
+                }
+            });
+            const [headline, ...rest] = String(quiz.explanation).split('\n');
+            document.getElementById('quiz-answer').innerHTML =
+                `<span class="font-bold text-emerald-600 block mb-1">${esc(headline)}</span>${esc(rest.join(' '))}`;
+            closeAnswer();
+
+            // 6. 푸터 출처
+            setText('footer-sources', issue.sources);
         }
 
         function openModal(key) {
@@ -760,18 +456,19 @@
             if (!item) return;
 
             const modalBody = document.getElementById('modal-body');
-            
-            const youtubeEmbedHtml = item.embedYoutubeId ? `
+            const youtubeId = /^[\w-]{6,20}$/.test(item.embedYoutubeId || '') ? item.embedYoutubeId : null;
+
+            const youtubeEmbedHtml = youtubeId ? `
                 <div class="mb-5 rounded-xl overflow-hidden aspect-video bg-black shadow-md">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/${item.embedYoutubeId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/${youtubeId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             ` : '';
 
-            const structuredContentHtml = item.sections ? item.sections.map(sec => `
+            const structuredContentHtml = item.sections && item.sections.length ? item.sections.map(sec => `
                 <div class="mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <h4 class="font-bold text-slate-900 text-sm mb-2 text-indigo-700">${sec.title}</h4>
+                    <h4 class="font-bold text-slate-900 text-sm mb-2 text-indigo-700">${esc(sec.title)}</h4>
                     <ul class="space-y-1.5 text-xs text-slate-700">
-                        ${sec.items.map(it => `<li class="flex items-start gap-1.5"><span class="text-amber-500 font-bold">•</span><span>${it}</span></li>`).join('')}
+                        ${sec.items.map(it => `<li class="flex items-start gap-1.5"><span class="text-amber-500 font-bold">•</span><span>${esc(it)}</span></li>`).join('')}
                     </ul>
                 </div>
             `).join('') : `
@@ -780,21 +477,21 @@
                         📌 핵심 요약 브리핑
                     </h3>
                     <ul class="space-y-2 text-sm text-slate-700">
-                        ${item.summary ? item.summary.map(s => `<li class="flex items-start gap-2"><span class="text-amber-500 font-bold">•</span><span>${s}</span></li>`).join('') : ''}
+                        ${(item.summary || []).map(s => `<li class="flex items-start gap-2"><span class="text-amber-500 font-bold">•</span><span>${esc(s)}</span></li>`).join('')}
                     </ul>
                 </div>
             `;
 
             modalBody.innerHTML = `
                 <div class="flex items-center gap-2 mb-3">
-                    <span class="text-xs font-bold px-2.5 py-1 rounded-full ${item.badgeColor}">
-                        ${item.badge}
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full ${BADGE_COLORS[key] || ''}">
+                        ${esc(item.badge)}
                     </span>
-                    <span class="text-xs text-slate-400 font-medium">${item.date}</span>
+                    <span class="text-xs text-slate-400 font-medium">${esc(item.date)}</span>
                 </div>
-                
+
                 <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 mb-4 leading-snug">
-                    ${item.title}
+                    ${esc(item.title)}
                 </h2>
 
                 ${youtubeEmbedHtml}
@@ -806,14 +503,14 @@
                         💡 선생님과 함께 읽는 심층 배경지식
                     </h3>
                     <p class="text-sm text-slate-600 leading-relaxed bg-amber-50/50 p-4 rounded-xl border border-amber-100">
-                        ${item.deepDive}
+                        ${esc(item.deepDive)}
                     </p>
                 </div>
 
                 <div class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <span class="text-xs text-slate-500">출처/발표: <strong>${item.sourceName}</strong></span>
-                    <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-colors text-center flex items-center justify-center gap-1">
-                        ${item.embedYoutubeId ? '🎬 유튜브 영상 원본 보기 ➔' : (item.sections ? '📄 논문 발표 원문 보기 ➔' : ' 보도자료 / 뉴스 원문 이동 ➔')}
+                    <span class="text-xs text-slate-500">출처/발표: <strong>${esc(item.sourceName)}</strong></span>
+                    <a href="${esc(safeUrl(item.sourceUrl))}" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-colors text-center flex items-center justify-center gap-1">
+                        ${youtubeId ? '🎬 유튜브 영상 원본 보기 ➔' : (item.sections ? '📄 논문 발표 원문 보기 ➔' : ' 보도자료 / 뉴스 원문 이동 ➔')}
                     </a>
                 </div>
             `;
@@ -823,6 +520,7 @@
 
         function closeModal() {
             document.getElementById('modal-backdrop').classList.add('hidden');
+            document.getElementById('modal-body').innerHTML = ''; // 영상 재생 중지
         }
 
         document.getElementById('modal-backdrop').addEventListener('click', function(e) {
@@ -830,9 +528,11 @@
                 closeModal();
             }
         });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
         // Interactive Option Selection
         function selectQuizOption(optionNum) {
+            if (!currentIssue) return;
             resetQuizOptions();
 
             const selectedBtn = document.getElementById(`option-${optionNum}`);
@@ -840,9 +540,7 @@
 
             selectedBadge.classList.remove('hidden');
 
-            const currentQuiz = dailyArchive[currentDateKey].quiz;
-
-            if (optionNum === currentQuiz.correct) {
+            if (optionNum === currentIssue.quiz.correct) {
                 selectedBtn.className = "w-full text-left p-2.5 bg-emerald-50 rounded-lg border-2 border-emerald-500 text-emerald-950 font-bold transition-all flex items-center justify-between cursor-pointer";
                 toggleAnswer(true);
             } else {
@@ -862,26 +560,33 @@
             });
         }
 
+        // 해설 닫기 + 선택 초기화
+        function closeAnswer() {
+            const answerBox = document.getElementById('quiz-answer');
+            const quizBtn = document.getElementById('quiz-btn');
+            answerBox.classList.add('hidden');
+            quizBtn.innerHTML = '💡 <span>전체 정답 및 해설 펼치기</span>';
+            quizBtn.classList.replace('bg-slate-600', 'bg-orange-500');
+            quizBtn.classList.replace('hover:bg-slate-700', 'hover:bg-orange-600');
+            resetQuizOptions();
+        }
+
         // Toggle Quiz Answer Functionality with Reset on Close
         function toggleAnswer(forceOpen = false) {
             const answerBox = document.getElementById('quiz-answer');
             const quizBtn = document.getElementById('quiz-btn');
-            
+
             if (forceOpen || answerBox.classList.contains('hidden')) {
                 answerBox.classList.remove('hidden');
                 quizBtn.innerHTML = '🔒 <span>전체 정답 및 해설 닫기</span>';
                 quizBtn.classList.replace('bg-orange-500', 'bg-slate-600');
                 quizBtn.classList.replace('hover:bg-orange-600', 'hover:bg-slate-700');
             } else {
-                // Closing state: Hide answer AND reset option selections
-                answerBox.classList.add('hidden');
-                quizBtn.innerHTML = '💡 <span>전체 정답 및 해설 펼치기</span>';
-                quizBtn.classList.replace('bg-slate-600', 'bg-orange-500');
-                quizBtn.classList.replace('hover:bg-slate-700', 'hover:bg-orange-600');
-                
-                resetQuizOptions();
+                closeAnswer();
             }
         }
+
+        init();
     </script>
 </body>
 </html>

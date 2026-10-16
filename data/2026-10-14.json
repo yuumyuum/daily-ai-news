@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-14",
+  "issueNo": 141,
+  "weekday": "수",
+  "news": {
+    "openai": {
+      "badge": "OpenAI (오픈AI)",
+      "tag": null,
+      "cardTitle": "오픈AI, 교사를 위한 AI 수업 보조 도구 모듈 전격 배포",
+      "cardSummary": "선생님들이 수업 자료를 훨씬 쉽고 빠르게 만들 수 있는 교사용 AI 어시스턴트 기능이 업데이트되었어!",
+      "title": "오픈AI, 교사를 위한 AI 수업 보조 도구 모듈 전격 배포",
+      "date": "2026년 10월 14일",
+      "sourceName": "OpenAI Education",
+      "sourceUrl": "https://openai.com",
+      "summary": [
+        "교사들의 맞춤형 학습 자료 작성을 지원하는 전용 템플릿 제작.",
+        "학생 수준별 평가 문제를 자동으로 다변화하여 생성하는 기능 수록."
+      ],
+      "deepDive": "교사의 업무 부담을 줄이고 학생 개개인에게 맞춤형 교육을 전달하는 데 큰 도움이 됩니다."
+    },
+    "gemini": {
+      "badge": "Google Gemini (제미나이)",
+      "tag": null,
+      "cardTitle": "구글 워크스페이스 실시간 실시간 음성 번역 기능 통합",
+      "cardSummary": "화상 회의나 수업 중 상대방 언어를 내 실시간 한국어 음성으로 즉시 번역해주는 기술이 도입됐어.",
+      "title": "구글 워크스페이스 실시간 실시간 음성 번역 기능 통합",
+      "date": "2026년 10월 14일",
+      "sourceName": "Google Workspace",
+      "sourceUrl": "https://workspace.google.com",
+      "summary": [
+        "다국어 화상 수업 및 인터뷰 시 실시간 다국어 음성 통역 기능 탑재.",
+        "자연스러운 목소리 톤을 유지하면서 통역하는 기술 적용."
+      ],
+      "deepDive": "언어 장벽 없는 글로벌 교류 수업이 교실 안에서 손쉽게 가능해집니다."
+    },
+    "claude": {
+      "badge": "Anthropic Claude (클로드)",
+      "tag": null,
+      "cardTitle": "코딩 및 수학 문제 해설 논리적 추론력 강화",
+      "cardSummary": "복잡한 풀이 과정이 필요한 수학 문제를 단계별로 친절하게 설명해주는 능력이 크게 좋아졌어!",
+      "title": "코딩 및 수학 문제 해설 논리적 추론력 강화",
+      "date": "2026년 10월 14일",
+      "sourceName": "Anthropic",
+      "sourceUrl": "https://www.anthropic.com",
+      "summary": [
+        "정답만 내놓는 것이 아닌 과정 중심의 논리적 해설 능력을 고도화.",
+        "학생이 틀린 단계를 직접 찾아 교정해주는 피드백 로직 개선."
+      ],
+      "deepDive": "단순 답안지가 아닌 1:1 수학 튜터로서 정교한 학습 조력자 역할을 수행합니다."
+    },
+    "tech": {
+      "badge": "신기술 탐구",
+      "category": "🚀 신기술 탐구",
+      "cardTitle": "초경량 온디바이스 AI 칩 탑재 스마트 안경 탑재",
+      "cardSummary": "인터넷 연결 없이도 내 눈앞의 사물을 즉시 설명해주는 스마트 글래스용 AI 기술이 선보였어!",
+      "title": "초경량 온디바이스 AI 칩 탑재 스마트 안경 탑재",
+      "date": "2026년 10월 14일",
+      "sourceName": "TechCrunch",
+      "sourceUrl": "https://techcrunch.com",
+      "summary": [
+        "클라우드 연결 없이 기기 내부 칩으로 실시간 인지 및 안내.",
+        "시각 장애인 및 학습 조력 도구로의 활용 가능성 증대."
+      ],
+      "deepDive": "네트워크 장애 걱정 없이 언제 어디서나 AI 지능을 사용하는 온디바이스 AI의 대표 사례입니다."
+    },
+    "social": {
+      "badge": "AI 윤리 이슈",
+      "cardTitle": "AI 저작권 및 이미지 생성물의 표기 의무화 법안 논의",
+      "cardSummary": "AI가 만든 이미지나 영상에 'AI 제작 워터마크'를 의무적으로 붙이도록 하는 새로운 법안들이 만들어지고 있어.",
+      "title": "AI 저작권 및 이미지 생성물의 표기 의무화 법안 논의",
+      "cardBadge": "📊 AI 윤리 이슈",
+      "question": null,
+      "date": "2026년 10월 14일",
+      "sourceName": "AI Law Review",
+      "sourceUrl": "https://law.go.kr",
+      "sections": [
+        {
+          "title": "1. 디저털 투명성 확보",
+          "items": [
+            "진짜 사진과 AI 합성 사진을 쉽게 구분하기 위한 워터마크 기술 표기 의무화."
+          ]
+        }
+      ],
+      "deepDive": "가짜 뉴스나 딥페이크 피해를 방지하고 디지털 윤리를 지키기 위한 중요한 사회적 기준이 됩니다."
+    }
+  },
+  "dictionary": null,
+  "tip": null,
+  "quiz": {
+    "question": "Q. 인터넷 연결 없이 스마트폰이나 로봇 기기 자체 내에 탑재되어 작동하는 AI 기술을 무엇이라고 할까요?",
+    "options": [
+      "1) 클라우드 AI",
+      "2) 온디바이스 AI",
+      "3) 아웃도어 AI"
+    ],
+    "correct": 2,
+    "explanation": "🎉 정답: 2번 (온디바이스 AI)\n기기(Device) 자체에 AI 알고리즘이 들어있어 빠르게 작동하는 기술입니다!"
+  },
+  "sources": "OpenAI, Google, Anthropic 공식 발표"
+}
