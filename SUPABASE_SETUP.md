@@ -4,6 +4,7 @@
 
 ## 1. Supabase 프로젝트 만들기 (처음 한 번)
 1. https://supabase.com 에 가입하고 **New project** 를 만듭니다. (지역은 Northeast Asia (Seoul) 추천)
+   - Security 설정: **Enable Data API 켜기**, **Automatically expose new tables 끄기**(권장), **Enable automatic RLS 켜기**
 2. 왼쪽 메뉴 **SQL Editor** → 새 쿼리에 `supabase/setup.sql` 내용을 통째로 붙여넣고 **Run**.
    - 투표 테이블과 함수 2개가 만들어집니다. 여러 번 실행해도 괜찮습니다.
 

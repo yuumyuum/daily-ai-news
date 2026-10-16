@@ -88,6 +88,8 @@ end;
 $$;
 
 -- 웹페이지(anon)는 두 함수만 실행 가능
+-- (프로젝트 생성 시 'Automatically expose new tables'를 꺼도 작동하도록 스키마 사용 권한을 명시)
+grant usage on schema public to anon, authenticated;
 revoke all on function public.debate_counts(date) from public;
 revoke all on function public.cast_debate_vote(date, text, text, text, text) from public;
 grant execute on function public.debate_counts(date) to anon, authenticated;
