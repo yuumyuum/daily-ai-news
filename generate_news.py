@@ -33,6 +33,9 @@ WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"]
 
 DEFAULT_MODEL = "gpt-4o"
 DEFAULT_SEARCH_TOOL = "web_search"
+DEFAULT_START_DATE = "2026-10-20"  # GPT 자동 발행 시작일 (저장소 변수 GPT_START_DATE 로 변경 가능)
+PUBLISH_WEEKDAYS = {0, 1, 2, 3, 4}  # 월~금 (한국 시간 기준)
+MAX_ATTEMPTS = 2  # 검사에 실패하면 오류 내용을 알려주고 한 번 더 생성
 
 # ─────────────────────────────────────────────
 # JSON 스키마 (OpenAI Structured Outputs, strict 모드)
@@ -167,7 +170,7 @@ def build_user_prompt(date_key, weekday, example, recent_titles):
 # ─────────────────────────────────────────────
 # OpenAI 호출
 # ─────────────────────────────────────────────
-def generate_with_openai(date_key, weekday, issues):
+def generate_with_openai(date_key, weekday, issues, feedback=None):
     from openai import OpenAI, BadRequestError
 
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -188,7 +191,8 @@ def generate_with_openai(date_key, weekday, issues):
         model=model,
         input=[
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": build_user_prompt(date_key, weekday, example, recent_titles)},
+            {"role": "user", "content": build_user_prompt(date_key, weekday, example, recent_titles)
+                + (f"\n\n[이전 시도에서 검사에 실패한 부분 - 반드시 고칠 것]\n{feedback}" if feedback else "")},
         ],
         text={"format": {"type": "json_schema", "name": "daily_issue", "schema": ISSUE_SCHEMA, "strict": True}},
     )
@@ -274,14 +278,25 @@ def save_issue(date_key, content, issues):
 def main():
     parser = argparse.ArgumentParser(description="1분 AI 모닝 리포트 하루치 생성")
     parser.add_argument("--date", help="YYYY-MM-DD (기본: 한국 시간 오늘)")
-    parser.add_argument("--force", action="store_true", help="이미 있는 호도 다시 생성")
+    parser.add_argument("--force", action="store_true", help="이미 있는 호도 다시 생성 (시작일·주말 조건도 무시)")
     parser.add_argument("--from-file", help="직접 준비한 JSON 파일을 이 날짜 호로 등록")
+    parser.add_argument("--scheduled", action="store_true",
+                        help="자동 실행용: GPT 시작일 이전이거나 주말이면 아무것도 하지 않음")
     args = parser.parse_args()
 
     date_key = args.date or dt.datetime.now(KST).date().isoformat()
-    dt.date.fromisoformat(date_key)  # 형식 검사
-    weekday = WEEKDAYS[dt.date.fromisoformat(date_key).weekday()]
+    day = dt.date.fromisoformat(date_key)  # 형식 검사
+    weekday = WEEKDAYS[day.weekday()]
     issues = load_issues()
+
+    if args.scheduled and not args.force:
+        start = dt.date.fromisoformat(os.environ.get("GPT_START_DATE") or DEFAULT_START_DATE)
+        if day < start:
+            print(f"GPT 자동 발행은 {start} 부터 시작해요. 오늘({date_key})은 건너뜁니다.")
+            return 0
+        if day.weekday() not in PUBLISH_WEEKDAYS:
+            print(f"오늘({date_key}, {weekday}요일)은 발행하지 않는 날이에요.")
+            return 0
 
     if (DATA_DIR / f"{date_key}.json").exists() and not args.force:
         print(f"{date_key} 호가 이미 있어요. 다시 만들려면 --force 를 붙이세요.")
@@ -291,11 +306,21 @@ def main():
         content = json.loads(Path(args.from_file).read_text(encoding="utf-8"))
         for k in ("date", "issueNo", "weekday"):
             content.pop(k, None)
+        errors = validate(content)
     else:
-        print(f"{date_key} ({weekday}) 신문 생성 중...")
-        content = generate_with_openai(date_key, weekday, issues)
+        if not os.environ.get("OPENAI_API_KEY"):
+            print("OPENAI_API_KEY 가 없어요. 저장소 Settings > Secrets and variables > Actions 에 등록해 주세요.")
+            return 1
+        feedback = None
+        for attempt in range(1, MAX_ATTEMPTS + 1):
+            print(f"{date_key} ({weekday}) 신문 생성 중... (시도 {attempt}/{MAX_ATTEMPTS})")
+            content = generate_with_openai(date_key, weekday, issues, feedback)
+            errors = validate(content)
+            if not errors:
+                break
+            feedback = "\n".join(f"- {e}" for e in errors)
+            print("검사 실패:\n" + feedback)
 
-    errors = validate(content)
     if errors:
         print("검사 실패 - 저장하지 않았어요:")
         for e in errors:

@@ -10,7 +10,9 @@ data/YYYY-MM-DD.json  하루치 신문 한 호
 generate_news.py      오늘 호 JSON을 만들어 data/ 에 "추가"
 ```
 
-- 매일 오전 7시(한국 시간) GitHub Actions가 `generate_news.py`를 실행해 새 호를 추가합니다. 지난 호는 지워지지 않습니다.
+- 평일(월~금) 새벽 5시 13분(한국 시간)에 GitHub Actions가 `generate_news.py`를 실행해 새 호를 추가합니다. 6시 43분에 한 번 더 실행되며, 이미 발행됐으면 아무것도 하지 않습니다. 지난 호는 지워지지 않습니다.
+- GPT 자동 발행은 2026-10-20부터 시작합니다. 시작일은 저장소 변수 `GPT_START_DATE`로 바꿀 수 있습니다.
+- 필요한 설정: Settings > Secrets and variables > Actions 에 `OPENAI_API_KEY` 시크릿 등록.
 - 지난 호 바로가기: `https://yuumyuum.github.io/daily-ai-news/?date=2026-10-15`
 - 디자인을 고치면 지난 호 전체에 한꺼번에 반영됩니다.
 

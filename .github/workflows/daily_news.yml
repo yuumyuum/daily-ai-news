@@ -2,8 +2,10 @@ name: Daily AI News Generator
 
 on:
   schedule:
-    # 한국 시간 기준 매일 오전 07:00 (UTC 22:00)
-    - cron: '0 22 * * *'
+    # 평일(월~금) 한국 시간 기준. GitHub 예약 실행은 1~2시간씩 늦어질 수 있어 일찍, 두 번 걸어 둠.
+    # cron 은 UTC 기준이라 한국의 월~금 = UTC 일~목.
+    - cron: '13 20 * * 0-4'   # 05:13 KST 본 실행
+    - cron: '43 21 * * 0-4'   # 06:43 KST 예비 실행 (이미 발행됐으면 아무것도 안 함)
   workflow_dispatch: # 깃허브 웹에서 버튼으로 수동 실행 가능하게 설정
     inputs:
       force:
@@ -41,9 +43,13 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           # 선택: 저장소 Settings > Variables 에서 모델을 바꿀 수 있음 (비워 두면 gpt-4o)
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          # 선택: GPT 자동 발행 시작일 (비워 두면 2026-10-20)
+          GPT_START_DATE: ${{ vars.GPT_START_DATE }}
         run: |
           if [ "${{ inputs.force }}" = "true" ]; then
             python generate_news.py --force
+          elif [ "${{ github.event_name }}" = "schedule" ]; then
+            python generate_news.py --scheduled
           else
             python generate_news.py
           fi
@@ -54,4 +60,5 @@ jobs:
           git config --local user.name "GitHub Actions Bot"
           git add data/
           git commit -m "Auto Update: Daily AI News ($(TZ=Asia/Seoul date +'%Y-%m-%d'))" || exit 0
+          git pull --rebase origin main
           git push
