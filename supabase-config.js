@@ -6,6 +6,6 @@
 // ※ secret / service_role 키는 절대 넣지 마세요. 모든 학생 정보를 읽을 수 있는 관리자 키입니다.
 // 비워 두면 투표 영역에 "준비 중" 안내만 표시됩니다.
 window.SUPABASE_CONFIG = {
-  url: '',
-  anonKey: ''
+  url: 'https://pnytvmpwpruobwqfqctf.supabase.co',
+  anonKey: 'sb_publishable_rXCLAOiBwsLqicQ-tTBNFA_QM-c6tEP'
 };
