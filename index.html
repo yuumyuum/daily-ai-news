@@ -11,6 +11,8 @@
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #f8fafc;
+            word-break: keep-all;        /* 한글 단어가 중간에서 끊기지 않게 */
+            overflow-wrap: break-word;   /* 아주 긴 영어 단어·주소만 줄바꿈 */
         }
         .newspaper-border {
             border-bottom: 3px double #cbd5e1;
@@ -74,10 +76,10 @@
 
     <div id="load-error" class="hidden bg-red-50 border border-red-200 text-red-800 text-sm rounded-2xl p-4 mb-6"></div>
 
-    <main id="main" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 is-loading">
+    <main id="main" class="flex flex-col gap-6 mb-8 is-loading">
 
         <!-- SECTION 1: 3대 AI 빅테크 현황 -->
-        <section id="bigtech-section" class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
+        <section id="bigtech-section" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-5">
                     <span class="text-2xl">🏢</span>
@@ -169,7 +171,7 @@
         </section>
 
         <!-- SECTION 3: 시사 & 논문 -->
-        <section id="social-section" class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <section id="social-section" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
             <div class="flex items-center gap-2 mb-4">
                 <span class="text-2xl">⚖️</span>
                 <h2 class="text-xl font-bold text-slate-900">알고 가야 할 AI 시사 & 사회 (최신 논문 심층분석)</h2>
