@@ -9,9 +9,9 @@
       "cardTitle": "청소년 전용 안전 가이드라인 및 최신 보안 정책 발표!",
       "cardSummary": "학생들이 AI를 해로운 용도 없이 안전하게 사용할 수 있도록 청소년 보호 가이드라인을 대폭 늘렸어! 최신 모델 보안 체계도 한층 더 탄탄해지고 있지.",
       "title": "청소년 전용 ChatGPT 안전 가이드 및 최신 프레임워크 공개",
-      "date": "2026년 10월 15일",
-      "sourceName": "The Guardian / OpenAI Official Center",
-      "sourceUrl": "https://www.google.com/search?q=OpenAI+safety+guidelines+for+teenagers+2026",
+      "date": "2026년 8월 18일 (원문 발표일)",
+      "sourceName": "OpenAI 공식 블로그",
+      "sourceUrl": "https://openai.com/index/chatgpt-for-teens/",
       "summary": [
         "학생들이 안전하게 AI를 이용할 수 있도록 개인정보 보호 및 유해 콘텐츠 차단 가이드라인이 신설되었습니다.",
         "학교 및 가정에서 안전하게 사용할 수 있는 청소년 계정 맞춤형 필터링 기술이 적용됩니다.",
@@ -68,13 +68,13 @@
     "social": {
       "badge": "시사 학술 연구 (JAMA Pediatrics / uOttawa)",
       "cardTitle": "\"학생 5명 중 1명, AI 챗봇과 마음을 나누는 상황… 연구 데이터가 밝힌 장점과 위협은?\"",
-      "cardSummary": "4만 명 대규모 학생 대상 최신 연구 결과(Phys.org 등)! 정서적 대화 상대로 AI를 찾는 학생들이 늘어난 이유와 과순응(Overcompliance)의 위험성을 다각도로 정리해봤어.",
+      "cardSummary": "4만 명 대규모 학생 대상 최신 연구 결과(JAMA Pediatrics)! 정서적 대화 상대로 AI를 찾는 학생들이 늘어난 이유와 과순응(Overcompliance)의 위험성을 다각도로 정리해봤어.",
       "title": "학생 21%가 고민 상담에 AI 활용: 연구로 보는 효과와 과순응 위험성",
       "cardBadge": "📊 학술 연구 (JAMA Pediatrics)",
       "question": "AI의 비판 없는 감정 공감(과순응)은 언제 우리에게 도움이 되고, 언제 현실 감각을 약화시킬까?",
-      "date": "2026년 10월 학술 보고",
-      "sourceName": "Phys.org / JAMA Pediatrics",
-      "sourceUrl": "https://phys.org/news/2026-10-students-chatbots-emotional-advice.html",
+      "date": "2026년 8월 31일 (JAMA Pediatrics 온라인 게재)",
+      "sourceName": "JAMA Pediatrics (오타와대 연구팀)",
+      "sourceUrl": "https://jamanetwork.com/journals/jamapediatrics/article-abstract/2853453",
       "sections": [
         {
           "title": "1. 학생들의 AI 챗봇 이용 현황",
