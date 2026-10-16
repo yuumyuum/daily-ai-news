@@ -9,13 +9,13 @@
    - 투표 테이블과 함수 2개가 만들어집니다. 여러 번 실행해도 괜찮습니다.
 
 ## 2. 사이트에 연결하기
-1. **Project Settings → API** (또는 Connect 버튼)에서 두 값을 복사합니다.
-   - Project URL (예: `https://abcdefghijkl.supabase.co`)
-   - `anon` `public` 키
+1. 두 값을 복사합니다.
+   - Project URL: 위쪽 **Connect** 버튼, 또는 **Project Settings → Data API** (예: `https://abcdefghijkl.supabase.co`)
+   - 공개용 키: **Project Settings → API Keys** 의 **Publishable key**(`sb_publishable_...`) 또는 **Legacy API keys** 탭의 **anon public**(`eyJ...`)
 2. 저장소의 `supabase-config.js` 를 열어 `url`, `anonKey` 에 붙여넣고 커밋합니다.
 3. 1~2분 뒤 사이트에서 투표 버튼이 켜집니다.
 
-> ⚠️ `service_role` 키는 절대 넣지 마세요. 모든 학생 정보를 읽고 지울 수 있는 관리자 키입니다.
+> ⚠️ `secret` / `service_role` 키는 절대 넣지 마세요. 모든 학생 정보를 읽고 지울 수 있는 관리자 키입니다.
 > `anon` 키는 공개용이라 사이트에 넣어도 됩니다. 이 키로는 투표하기와 찬반 숫자 보기만 가능하고, 학번·이름·이유는 볼 수 없습니다.
 
 ## 3. 결과 보기 (선생님)
