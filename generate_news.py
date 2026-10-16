@@ -35,6 +35,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
 ISSUES_FILE = DATA_DIR / "issues.json"
+HOLIDAYS_FILE = ROOT / "korean_holidays.json"
 KST = ZoneInfo("Asia/Seoul")
 WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"]
 NEWS_KEYS = ("openai", "gemini", "claude", "tech", "social")
@@ -150,6 +151,27 @@ def next_issue_no(issues, date_key):
         if entry["date"] == date_key:  # 같은 날 재생성이면 호수 유지
             return entry["issueNo"]
     return max((e["issueNo"] for e in issues), default=0) + 1
+
+
+def holiday_name(day):
+    """한국 공휴일·쉬는 날이면 이름을, 아니면 None.
+    1) korean_holidays.json (직접 관리: 공휴일·대체공휴일·임시공휴일·재량휴업일 등)
+    2) holidays 라이브러리의 한국 공휴일 (목록에 없는 해를 위한 보조)"""
+    key = day.isoformat()
+    listed = {}
+    if HOLIDAYS_FILE.exists():
+        listed = json.loads(HOLIDAYS_FILE.read_text(encoding="utf-8")).get("dates", {})
+    if key in listed:
+        return listed[key]
+    if not any(d.startswith(f"{day.year}-") for d in listed):
+        print(f"참고: korean_holidays.json 에 {day.year}년 목록이 없어 holidays 라이브러리만 확인해요.")
+    try:
+        import holidays
+        kr = holidays.country_holidays("KR", years=day.year, language="ko")
+        return kr.get(day)
+    except Exception as e:  # 라이브러리가 없거나 언어 옵션 미지원 등
+        print(f"참고: holidays 라이브러리 확인 실패({type(e).__name__}) - 목록 파일만 사용해요.")
+        return None
 
 
 def normalize_url(url):
@@ -569,6 +591,10 @@ def main():
             return 0
         if day.weekday() not in PUBLISH_WEEKDAYS:
             print(f"오늘({date_key}, {weekday}요일)은 발행하지 않는 날이에요.")
+            return 0
+        holiday = holiday_name(day)
+        if holiday:
+            print(f"오늘({date_key})은 공휴일({holiday})이라 발행하지 않아요.")
             return 0
 
     if (DATA_DIR / f"{date_key}.json").exists() and not args.force:

@@ -1,1 +1,2 @@
 openai>=1.66
+holidays>=0.50
